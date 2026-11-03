@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { createClient as createSupabaseClient } from "../../../lib/supabase/client";
 import { ArrowLeft, Download, FileDown, Info, Printer, RotateCcw, ShieldCheck } from "lucide-react";
 import { PAYMENT_METHODS } from "../../../lib/payment-methods";
@@ -14,6 +14,40 @@ const COUNTRY_CODES = ["AD","AE","AF","AG","AI","AL","AM","AO","AQ","AR","AS","A
 const COUNTRY_NAMES = COUNTRY_CODES
   .map((code) => ({ code, name: new Intl.DisplayNames(["en"], { type: "region" }).of(code) || code }))
   .sort((a, b) => a.name.localeCompare(b.name));
+
+type CountryVisual = { code: string; name: string; flag: string; primary: string; accent: string; light: string };
+const COUNTRY_PALETTES: Record<string, { primary: string; accent: string; light: string }> = {
+  US:{primary:"#244477",accent:"#b7474a",light:"#eef1f7"}, GB:{primary:"#253b63",accent:"#b74c55",light:"#eff1f6"},
+  CA:{primary:"#a93442",accent:"#d7b9a9",light:"#f8eeee"}, PL:{primary:"#a43b48",accent:"#d9d3c8",light:"#f8f1ed"},
+  DE:{primary:"#343434",accent:"#bd6a45",light:"#f3eee8"}, FR:{primary:"#294b80",accent:"#b84b56",light:"#eef1f7"},
+  IT:{primary:"#27634d",accent:"#bd4d4b",light:"#edf4ee"}, ES:{primary:"#9d373d",accent:"#c6a34e",light:"#f7f0e2"},
+  NL:{primary:"#244873",accent:"#bd4b4b",light:"#edf1f7"}, BE:{primary:"#353535",accent:"#b58b3f",light:"#f5f1e8"},
+  CH:{primary:"#a8333c",accent:"#d3d0c4",light:"#f8eeee"}, AT:{primary:"#a33c47",accent:"#d8d2c5",light:"#f8f0ed"},
+  IE:{primary:"#286047",accent:"#d0a64d",light:"#eef4ec"}, PT:{primary:"#246048",accent:"#b84c44",light:"#eef4ec"},
+  SE:{primary:"#2a527d",accent:"#d1b052",light:"#eef2f6"}, NO:{primary:"#273e67",accent:"#b74c50",light:"#eef0f6"},
+  DK:{primary:"#a83a46",accent:"#ddd5c5",light:"#f8f0ed"}, FI:{primary:"#315a83",accent:"#d3d8db",light:"#eff3f7"},
+  JP:{primary:"#f2eee8",accent:"#ad3d46",light:"#faf7f1"}, KR:{primary:"#344a70",accent:"#ad4a4e",light:"#eef1f6"},
+  CN:{primary:"#9d3338",accent:"#d2ad4e",light:"#f8efdf"}, IN:{primary:"#286047",accent:"#c58d3e",light:"#eef4e9"},
+  BR:{primary:"#276146",accent:"#c4a342",light:"#eef4e8"}, MX:{primary:"#286149",accent:"#b64b49",light:"#eef4ed"},
+  AU:{primary:"#244477",accent:"#c2a45d",light:"#eef1f7"}, NZ:{primary:"#263c65",accent:"#a9454c",light:"#eff1f6"},
+  ZA:{primary:"#286047",accent:"#bd9b45",light:"#eef4e8"}, TR:{primary:"#9e3742",accent:"#d7c5bc",light:"#f8efed"},
+  UA:{primary:"#315b83",accent:"#d4b34f",light:"#eef3f7"}, GR:{primary:"#31577c",accent:"#d2c5a6",light:"#eff3f6"},
+  RU:{primary:"#37486c",accent:"#b74b4f",light:"#eff1f6"}, AE:{primary:"#276047",accent:"#a83e45",light:"#eef4e8"},
+  SA:{primary:"#285844",accent:"#c7ad76",light:"#eef3e9"}, SG:{primary:"#a63b46",accent:"#d6d0c5",light:"#f8efee"},
+  TH:{primary:"#343f68",accent:"#ad4650",light:"#f0f0f6"}, ID:{primary:"#a83b46",accent:"#d8d0c5",light:"#f8efee"},
+  MY:{primary:"#244575",accent:"#b84c50",light:"#eff2f7"}, PH:{primary:"#264774",accent:"#b64a4e",light:"#eff2f7"},
+  KZ:{primary:"#2870a0",accent:"#d1b15c",light:"#edf4f7"}
+};
+function countryFlag(code: string) {
+  if (!/^[A-Z]{2}$/.test(code)) return "🌐";
+  return String.fromCodePoint(...Array.from(code, (letter) => letter.charCodeAt(0) + 127397));
+}
+function getCountryVisual(name: string): CountryVisual {
+  const country = COUNTRY_NAMES.find((item) => item.name === name);
+  const code = country?.code || "";
+  const palette = COUNTRY_PALETTES[code] || { primary: "#315747", accent: "#b99a5d", light: "#eef3ec" };
+  return { code, name: country?.name || "Select a country", flag: countryFlag(code), ...palette };
+}
 
 
 const configs: Record<string, { title: string; eyebrow: string; description: string; price: string; fields: Field[]; sample?: boolean; kind: string }> = {
@@ -195,36 +229,41 @@ function buildSvg(kind: string, v: Values, totals: { subtotal: number; tax: numb
   }
 
   if (kind === "passport") {
-    const left = '<rect x="18" y="18" width="565" height="724" rx="22" fill="#f7f3e8" stroke="#c8c0a9" stroke-width="2"/>' +
-      '<rect x="598" y="18" width="584" height="724" rx="22" fill="#fbf8ee" stroke="#c8c0a9" stroke-width="2"/>' +
-      '<rect x="34" y="34" width="533" height="692" rx="14" fill="none" stroke="#d9d1bc" stroke-width="1"/>' +
-      '<rect x="614" y="34" width="552" height="692" rx="14" fill="none" stroke="#d9d1bc" stroke-width="1"/>';
-    const cover = text(65, 105, "DOCUBRIDGE · LEARNING EDITION", 15, "#426859", 700) +
-      '<circle cx="300" cy="285" r="92" fill="#e4e8dd" stroke="#9eae9f" stroke-width="2"/>' +
-      '<path d="M260 285h80M300 245v80" stroke="#9eae9f" stroke-width="3"/>' +
-      text(300, 430, "EDUCATIONAL", 32, "#315747", 700).replace('x="300"', 'x="300" text-anchor="middle"') +
-      text(300, 474, "PASSPORT MOCKUP", 25, "#315747", 700).replace('x="300"', 'x="300" text-anchor="middle"') +
-      text(300, 535, "FICTIONAL DESIGN SPECIMEN", 13, "#64756a", 700).replace('x="300"', 'x="300" text-anchor="middle"') +
+    const country = getCountryVisual(v.country);
+    const left = '<rect x="18" y="18" width="565" height="724" rx="22" fill="' + country.light + '" stroke="' + country.accent + '" stroke-width="2"/>' +
+      '<rect x="598" y="18" width="584" height="724" rx="22" fill="#fbf8ee" stroke="' + country.accent + '" stroke-width="2"/>' +
+      '<rect x="34" y="34" width="533" height="692" rx="14" fill="none" stroke="' + country.primary + '" stroke-opacity=".3"/>' +
+      '<rect x="614" y="34" width="552" height="692" rx="14" fill="none" stroke="' + country.primary + '" stroke-opacity=".3"/>' +
+      '<rect x="18" y="18" width="565" height="12" rx="6" fill="' + country.primary + '"/>' +
+      '<rect x="598" y="18" width="584" height="12" rx="6" fill="' + country.primary + '"/>';
+    const cover = text(65, 105, "DOCUBRIDGE · COUNTRY LEARNING EDITION", 14, country.primary, 700) +
+      text(300, 214, country.flag, 72, country.primary, 400).replace('x="300"', 'x="300" text-anchor="middle"') +
+      text(300, 340, country.name.toUpperCase(), 27, country.primary, 700).replace('x="300"', 'x="300" text-anchor="middle"') +
+      text(300, 400, "EDUCATIONAL", 29, country.primary, 700).replace('x="300"', 'x="300" text-anchor="middle"') +
+      text(300, 440, "PASSPORT MOCKUP", 22, country.primary, 700).replace('x="300"', 'x="300" text-anchor="middle"') +
+      '<path d="M190 478H410" stroke="' + country.accent + '" stroke-width="3"/>' +
+      text(300, 520, "FICTIONAL COUNTRY EDITION", 12, "#64756a", 700).replace('x="300"', 'x="300" text-anchor="middle"') +
       text(300, 660, "NOT ISSUED BY ANY GOVERNMENT", 12, "#9b473f", 700).replace('x="300"', 'x="300" text-anchor="middle"');
     const details = [
       ["Full name", v.fullName], ["Nationality", v.nationality], ["Date of birth", v.dateOfBirth],
-      ["Issuing country (selected)", v.country], ["Issue date (existing)", v.passportIssueDate],
-      ["Expiry date (existing)", v.passportExpiryDate], ["Application type", v.applicationType],
+      ["Selected country", country.name], ["Existing issue date", v.passportIssueDate],
+      ["Existing expiry date", v.passportExpiryDate], ["Application type", v.applicationType],
       ["Contact email", v.email], ["Telephone", v.phone]
     ].filter((row) => row[1]).map((row,i) => {
       const y=305+i*43;
-      return text(770,y,row[0].toUpperCase(),10,"#738176",700)+text(770,y+22,String(row[1]),15,"#263b33",700);
+      return text(770,y,row[0].toUpperCase(),10,country.primary,700)+text(770,y+22,String(row[1]),15,"#263b33",700);
     }).join("");
-    const info = text(650, 92, "DOCUBRIDGE · EDUCATIONAL SPECIMEN", 13, "#426859", 700) +
-      text(650, 150, "PERSONAL DETAILS", 24, "#263b33", 700) +
-      '<rect x="650" y="178" width="156" height="100" rx="7" fill="#e2e8dd" stroke="#aab8a7"/>' +
-      text(728, 222, v.fullName ? String(v.fullName).slice(0,1).toUpperCase() : "PHOTO", 31, "#54705f", 700).replace('x="728"', 'x="728" text-anchor="middle"') +
-      text(728, 253, "PHOTO AREA", 10, "#54705f", 700).replace('x="728"', 'x="728" text-anchor="middle"') +
+    const info = '<rect x="650" y="62" width="500" height="43" rx="6" fill="' + country.primary + '"/>' +
+      text(668, 89, country.flag + "  " + country.name.toUpperCase() + " · EDUCATIONAL EDITION", 13, "#ffffff", 700) +
+      text(650, 150, "APPLICANT INFORMATION", 23, country.primary, 700) +
+      '<rect x="650" y="178" width="156" height="100" rx="7" fill="' + country.light + '" stroke="' + country.accent + '"/>' +
+      text(728, 222, v.fullName ? String(v.fullName).slice(0,1).toUpperCase() : "PHOTO", 31, country.primary, 700).replace('x="728"', 'x="728" text-anchor="middle"') +
+      text(728, 253, "PHOTO AREA", 10, country.primary, 700).replace('x="728"', 'x="728" text-anchor="middle"') +
       details +
       '<rect x="650" y="660" width="500" height="44" rx="6" fill="#f0e4d6" stroke="#d9bca9"/>' +
       text(668, 687, "EDUCATIONAL SAMPLE — NOT VALID", 16, "#9b3f37", 700);
     const watermark='<g transform="rotate(-24 600 380)" opacity="0.19"><text x="600" y="400" text-anchor="middle" font-family="Arial, sans-serif" font-size="78" font-weight="700" fill="#a83232">EDUCATIONAL SAMPLE · NOT VALID</text></g>';
-    const spine='<rect x="580" y="28" width="18" height="704" rx="8" fill="#d7cfbb"/><path d="M589 42V718" stroke="#b7ad96" stroke-width="1"/>';
+    const spine='<rect x="580" y="28" width="18" height="704" rx="8" fill="' + country.accent + '"/><path d="M589 42V718" stroke="' + country.primary + '" stroke-opacity=".45" stroke-width="1"/>';
     return base(1200,760,left+cover+info+spine+watermark,"#e9e5d9");
   }
   if (kind === "licence") {
@@ -430,38 +469,43 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
               </>}
               {config.kind === "certificate" && <div className="certificate-doc"><div className="cert-kicker">AWARD OF RECOGNITION</div><div className="cert-rule"/><h3>{values.achievement}</h3><p>This certificate is proudly presented to</p><div className="cert-recipient">{values.recipient}</div><p>For {values.course}</p><div className="cert-footer"><div><b>{values.issuer}</b><span>Presented by</span></div><div><b>{values.issueDate}</b><span>Date issued</span></div></div><small>{values.certificateId}</small></div>}
               {config.kind === "id" && <div className="id-card-doc"><div className="id-card-band"><span>{values.organization}</span><small>ORGANISATION ACCESS CARD</small></div><div className="id-card-body"><div className="avatar-placeholder">{(values.fullName || "A").slice(0,1).toUpperCase()}</div><div className="id-details"><strong>{values.fullName}</strong><b>{values.role}</b><span>BADGE REF · {values.cardId}</span><span>{values.email}</span><span>VALID THROUGH · {values.validity}</span></div></div><div className="id-card-foot">ORGANISATION ISSUED · NOT A GOVERNMENT ID</div></div>}
-              {config.kind === "passport" && <div className="passport-booklet" aria-label="Educational passport mockup, not valid for travel">
-                <div className="passport-open-spread">
-                  <section className="passport-left-page">
-                    <div className="passport-specimen-label">DOCUBRIDGE · LEARNING EDITION</div>
-                    <div className="passport-emblem" aria-hidden="true"><span>✦</span></div>
-                    <div className="passport-cover-title">EDUCATIONAL<br/>PASSPORT MOCKUP</div>
-                    <div className="passport-cover-subtitle">FICTIONAL DESIGN SPECIMEN</div>
-                    <div className="passport-cover-foot">NOT ISSUED BY ANY GOVERNMENT</div>
-                  </section>
-                  <section className="passport-right-page">
-                    <div className="passport-page-kicker">DOCUBRIDGE · EDUCATIONAL SPECIMEN</div>
-                    <h3>Personal details</h3>
-                    <div className="passport-identity-layout">
-                      <div className="passport-photo-slot">{passportPhoto ? <span>PHOTO<br/>ATTACHED</span> : <span>PHOTO<br/>AREA</span>}</div>
-                      <div className="passport-fields">
-                        <div><small>FULL NAME</small><strong>{values.fullName || "Applicant name"}</strong></div>
-                        <div><small>NATIONALITY</small><strong>{values.nationality || "Not provided"}</strong></div>
-                        <div><small>DATE OF BIRTH</small><strong>{values.dateOfBirth || "Not provided"}</strong></div>
-                        <div><small>ISSUING COUNTRY</small><strong>{values.country || "Not selected"}</strong></div>
-                        <div className="passport-date-pair"><div><small>ISSUE DATE (EXISTING)</small><strong>{values.passportIssueDate || "Not provided"}</strong></div><div><small>EXPIRY DATE (EXISTING)</small><strong>{values.passportExpiryDate || "Not provided"}</strong></div></div>
-                        <div><small>APPLICATION TYPE</small><strong>{values.applicationType || "Not specified"}</strong></div>
-                        <div><small>CONTACT</small><strong>{values.email || "Not provided"} {values.phone ? " · " + values.phone : ""}</strong></div>
+              {config.kind === "passport" && (() => {
+                const countryEdition = getCountryVisual(values.country);
+                const themeStyle = { "--passport-primary": countryEdition.primary, "--passport-accent": countryEdition.accent, "--passport-light": countryEdition.light } as CSSProperties;
+                return <div className="passport-booklet" style={themeStyle} aria-label={countryEdition.name + " educational passport mockup, not valid for travel"}>
+                  <div className="passport-open-spread">
+                    <section className="passport-left-page">
+                      <div className="passport-specimen-label">DOCUBRIDGE · COUNTRY LEARNING EDITION</div>
+                      <div className="passport-emblem" aria-hidden="true"><span>{countryEdition.flag}</span></div>
+                      <div className="passport-country-name">{countryEdition.name.toUpperCase()}</div>
+                      <div className="passport-cover-title">EDUCATIONAL<br/>PASSPORT MOCKUP</div>
+                      <div className="passport-cover-subtitle">FICTIONAL COUNTRY EDITION</div>
+                      <div className="passport-cover-foot">NOT ISSUED BY ANY GOVERNMENT</div>
+                    </section>
+                    <section className="passport-right-page">
+                      <div className="passport-page-kicker">{countryEdition.flag} {countryEdition.name.toUpperCase()} · EDUCATIONAL EDITION</div>
+                      <h3>Applicant information</h3>
+                      <div className="passport-identity-layout">
+                        <div className="passport-photo-slot">{passportPhoto ? <span>PHOTO<br/>ATTACHED</span> : <span>PHOTO<br/>AREA</span>}</div>
+                        <div className="passport-fields">
+                          <div><small>FULL NAME</small><strong>{values.fullName || "Applicant name"}</strong></div>
+                          <div><small>NATIONALITY</small><strong>{values.nationality || "Not provided"}</strong></div>
+                          <div><small>DATE OF BIRTH</small><strong>{values.dateOfBirth || "Not provided"}</strong></div>
+                          <div><small>SELECTED PASSPORT COUNTRY</small><strong>{countryEdition.name}</strong></div>
+                          <div className="passport-date-pair"><div><small>EXISTING ISSUE DATE</small><strong>{values.passportIssueDate || "Not provided"}</strong></div><div><small>EXISTING EXPIRY DATE</small><strong>{values.passportExpiryDate || "Not provided"}</strong></div></div>
+                          <div><small>APPLICATION TYPE</small><strong>{values.applicationType || "Not specified"}</strong></div>
+                          <div><small>CONTACT</small><strong>{values.email || "Not provided"} {values.phone ? " · " + values.phone : ""}</strong></div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="passport-fictional-reference">EDUCATIONAL REFERENCE · EDU-DB-SAMPLE</div>
-                    <div className="passport-validity-mark">EDUCATIONAL SAMPLE — NOT VALID</div>
-                    <div className="passport-page-number">01</div>
-                  </section>
-                  <div className="passport-spine" aria-hidden="true"/>
-                </div>
-                <div className="passport-preview-caption">Illustrative layout only. No government authority, travel validity or identity verification is represented.</div>
-              </div>}
+                      <div className="passport-fictional-reference">FICTIONAL EDUCATIONAL REF · EDU-DB-SAMPLE</div>
+                      <div className="passport-validity-mark">EDUCATIONAL SAMPLE — NOT VALID</div>
+                      <div className="passport-page-number">01</div>
+                    </section>
+                    <div className="passport-spine" aria-hidden="true"/>
+                  </div>
+                  <div className="passport-preview-caption">Country-themed educational mockup for {countryEdition.name}. It is not an official document and cannot be used for travel or identity verification.</div>
+                </div>;
+              })()}
               {config.kind === "licence" && <div className="application-summary-preview"><span className="application-watermark">UNPAID</span><strong>INTERNATIONAL DRIVING PERMIT APPLICATION</strong><span>{values.fullName || "Applicant name"}</span><small>{values.country || "Current licence country"} → {values.destinationCountry || "Destination country"}</small><small>Photograph: {passportPhoto ? "Selected" : "Not attached"} · Signature: {signatureFile ? "Selected" : "Not attached"}</small><em>APPLICATION PREPARATION ONLY — NOT A DRIVING LICENCE</em></div>}
               {config.kind === "utility" && <div className="utility-doc"><div className="utility-doc-head"><div><span>DEMO STATEMENT</span><h3>{values.provider}</h3></div><b>UTILITY<br/>SAMPLE</b></div><div className="utility-watermark">SAMPLE · NOT VALID</div><div className="utility-doc-customer"><small>FICTIONAL CUSTOMER</small><strong>{values.customer}</strong><span>{values.serviceAddress}</span></div><div className="utility-doc-grid"><div><small>DEMO ACCOUNT</small><b>{values.accountRef}</b></div><div><small>BILLING PERIOD</small><b>{values.period}</b></div><div><small>SAMPLE DUE DATE</small><b>{values.dueDate}</b></div></div><div className="utility-amount"><span>SAMPLE AMOUNT</span><strong>{money(Number(values.amount))}</strong></div><div className="utility-disclaimer">FICTIONAL LAYOUT FOR DESIGN TESTING ONLY · NOT PROOF OF ADDRESS OR PAYMENT</div></div>}
             </div>
