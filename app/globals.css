@@ -111,3 +111,32 @@
 .crypto-wallet-row button{border:1px solid #cbdacf;background:#fff;border-radius:7px;padding:7px 10px;font-size:11px;color:#254b38;cursor:pointer}
 .application-summary-preview{position:relative;overflow:hidden}
 .application-watermark{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-24deg);font-size:clamp(44px,9vw,84px);font-weight:900;letter-spacing:.08em;color:rgba(168,50,50,.22);pointer-events:none}
+
+/* Passport-style educational booklet mockup */
+.passport-booklet{width:100%;max-width:900px;margin:18px auto;color:#24372e}
+.passport-open-spread{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:430px;padding:12px;border-radius:16px;background:linear-gradient(135deg,#e7e2d5,#d9d2c1);box-shadow:0 20px 50px #17291e20;border:1px solid #c8c0ae;overflow:hidden}
+.passport-left-page,.passport-right-page{position:relative;min-width:0;padding:24px 22px;background:radial-gradient(ellipse at 50% 45%,#fffdf5,#f2eddf 78%);border:1px solid #d7cfbd;overflow:hidden}
+.passport-left-page{border-radius:9px 2px 2px 9px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.passport-right-page{border-radius:2px 9px 9px 2px}
+.passport-left-page:before,.passport-right-page:before{content:"";position:absolute;inset:9px;border:1px solid #d9d1bd;border-radius:5px;pointer-events:none}
+.passport-specimen-label,.passport-page-kicker{position:relative;font:800 9px Manrope,sans-serif;letter-spacing:.13em;color:#567565}
+.passport-emblem{position:relative;display:grid;place-items:center;width:112px;height:112px;margin:54px auto 24px;border:2px solid #9aac99;border-radius:50%;color:#63806d;background:repeating-radial-gradient(circle,#f5f1e5 0 5px,#e7e5d7 6px 7px)}
+.passport-emblem span{font-size:46px}
+.passport-cover-title{position:relative;font:800 clamp(17px,2.4vw,25px)/1.35 Manrope,sans-serif;letter-spacing:.04em;color:#315747}
+.passport-cover-subtitle{position:relative;margin-top:17px;font:800 9px Manrope,sans-serif;letter-spacing:.16em;color:#788476}
+.passport-cover-foot{position:relative;margin-top:auto;padding-top:24px;font:800 9px Manrope,sans-serif;letter-spacing:.1em;color:#9b4b41}
+.passport-right-page h3{position:relative;margin:14px 0 20px;font:800 21px Manrope,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#334f40}
+.passport-identity-layout{position:relative;display:grid;grid-template-columns:112px minmax(0,1fr);gap:15px}
+.passport-photo-slot{height:145px;display:grid;place-items:center;text-align:center;border:1px solid #aeb9a8;border-radius:5px;background:linear-gradient(145deg,#e7ebdf,#dce3d8);font:800 10px Manrope,sans-serif;letter-spacing:.1em;color:#718574}
+.passport-fields{display:grid;align-content:start;gap:10px;min-width:0}
+.passport-fields>div{display:grid;gap:3px;min-width:0}
+.passport-fields small{font:800 8px Manrope,sans-serif;letter-spacing:.1em;color:#718075}
+.passport-fields strong{font:700 11px 'DM Sans',sans-serif;color:#293e34;overflow-wrap:anywhere}
+.passport-date-pair{grid-template-columns:1fr 1fr;gap:9px}
+.passport-date-pair>div{display:grid;gap:3px}
+.passport-fictional-reference{position:relative;margin-top:16px;font:700 8px 'DM Sans',sans-serif;letter-spacing:.08em;color:#758376}
+.passport-validity-mark{position:relative;margin-top:9px;padding:8px 9px;border:1px solid #d7a79a;border-radius:4px;background:#f6e9e3;color:#9b3f37;text-align:center;font:900 10px Manrope,sans-serif;letter-spacing:.08em}
+.passport-page-number{position:absolute;right:20px;bottom:13px;font:700 9px Manrope;color:#829082}
+.passport-spine{position:absolute;z-index:3;top:16px;bottom:16px;left:50%;width:13px;transform:translateX(-50%);background:linear-gradient(90deg,#c7beaa,#eee8d9 45%,#bfb59f);box-shadow:0 0 8px #6b645326}
+.passport-preview-caption{margin-top:10px;text-align:center;font:10px/1.6 'DM Sans',sans-serif;color:#7b887e}
+@media(max-width:650px){.passport-open-spread{grid-template-columns:1fr;padding:8px}.passport-left-page{min-height:330px;border-radius:8px 8px 2px 2px}.passport-right-page{min-height:430px;border-radius:2px 2px 8px 8px}.passport-spine{display:none}.passport-emblem{margin:32px auto 18px}.passport-identity-layout{grid-template-columns:92px minmax(0,1fr);gap:10px}.passport-photo-slot{height:125px}.passport-right-page{padding:20px 16px}}
