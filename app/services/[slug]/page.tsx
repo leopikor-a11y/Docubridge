@@ -1,9 +1,8 @@
-const serviceMap:Record<string,{title:string;description:string;price:string;steps:string[]}>={
- invoice:{title:"Invoice & receipt builder",description:"Prepare professional business invoices and receipts.",price:"From $4.00",steps:["Enter supplier and customer details","Add line items, tax and payment terms","Review and export your document"]},
- "id-cards":{title:"Employee, membership & event ID cards",description:"Create clearly identified non-government ID cards for legitimate organisations.",price:"From $5.00",steps:["Choose a card layout","Add the holder's details and organisation","Review and export the card"]},
- "passport-generator":{title:"Passport Generator",description:"Create a fictional passport-style design for demonstrations, props or creative projects. Every output must be prominently marked SAMPLE — NOT A GOVERNMENT DOCUMENT and must not imitate a genuine passport.",price:"From $6.00",steps:["Choose a clearly fictional sample layout","Add fictional details and a custom design","Export with a prominent SAMPLE — NOT VALID watermark"]},
- "driving-licence-generator":{title:"Driving Licence Generator",description:"Create a fictional driving-licence-style design for demonstrations, props or creative projects. Every output must be prominently marked SAMPLE — NOT A GOVERNMENT DOCUMENT and must not imitate a genuine licence.",price:"From $6.00",steps:["Choose a clearly fictional sample layout","Add fictional details and a custom design","Export with a prominent SAMPLE — NOT VALID watermark"]},
- "utility-sample":{title:"Utility bill sample layout",description:"A fictional, visibly marked sample for design and testing only; never valid as proof of address.",price:"From $3.00",steps:["Choose a sample layout","Enter fictional test details","Export with SAMPLE — NOT VALID prominently displayed"]},
- certificates:{title:"Certificate builder",description:"Create certificates for training, courses, events and internal recognition.",price:"From $4.00",steps:["Choose a certificate design","Enter issuer, recipient and course details","Review and export"]},
-};
-export default async function ServicePage({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const s=serviceMap[slug];if(!s)return <main className="wrap toolPage"><h1>Service not found</h1><a href="/">Return home</a></main>;return <main className="wrap toolPage"><a className="backLink" href="/">← All services</a><div className="eyebrow">DOCUBRIDGE SERVICE</div><h1 className="pageTitle">{s.title}</h1><p className="lead">{s.description}</p><div className="serviceDetail"><div><span className="priceTag">INDICATIVE PRICE</span><strong>{s.price}</strong></div><h2>How it works</h2><ol>{s.steps.map(x=><li key={x}>{x}</li>)}</ol><p className="hint">This is an initial service preview. Document editing, secure uploads, final pricing and checkout are not yet connected.</p><a className="button primary" href="/account">Continue to workspace</a></div></main>}
+import ServiceBuilder from "./service-builder";
+
+export const dynamicParams = true;
+
+export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  return <ServiceBuilder slug={slug} />;
+}
