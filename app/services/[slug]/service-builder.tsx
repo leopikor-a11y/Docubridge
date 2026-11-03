@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { createClient as createSupabaseClient } from "../../../lib/supabase/client";
 import { ArrowLeft, Download, FileDown, Info, Printer, RotateCcw, ShieldCheck } from "lucide-react";
 
 type Values = Record<string, string>;
@@ -185,6 +186,8 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
   const [values, setValues] = useState<Values>(() => ({ ...defaults }));
   const [saved, setSaved] = useState(false);
   const [exportError, setExportError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
 
   const totals = useMemo(() => {
     const subtotal = Math.max(0, Number(values.unitPrice) || 0) * Math.max(0, Number(values.quantity) || 0);
@@ -227,6 +230,57 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
   function printPdf() {
     setSaved(true);
     window.print();
+  }
+
+  async function saveToWorkspace() {
+    setSaving(true);
+    setSaveMessage("");
+    setExportError("");
+    try {
+      const supabase = createSupabaseClient();
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        window.location.href = "/account?next=" + encodeURIComponent(window.location.pathname);
+        return;
+      }
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert({ user_id: user.id, service_slug: slug, status: "draft", currency: "USD", amount_usd: 0 })
+        .select("id")
+        .single();
+      if (orderError || !order) throw orderError || new Error("Could not create a draft order.");
+
+      const svg = buildSvg(config.kind, values, totals);
+      const path = user.id + "/" + order.id + "/preview.svg";
+      const { error: uploadError } = await supabase.storage
+        .from("customer-documents")
+        .upload(path, new Blob([svg], { type: "image/svg+xml" }), {
+          contentType: "image/svg+xml",
+          upsert: false
+        });
+      if (uploadError) {
+        await supabase.from("orders").delete().eq("id", order.id).eq("user_id", user.id);
+        throw uploadError;
+      }
+
+      const { error: fileError } = await supabase.from("order_files").insert({
+        order_id: order.id,
+        user_id: user.id,
+        storage_path: path,
+        file_kind: "output"
+      });
+      if (fileError) {
+        await supabase.storage.from("customer-documents").remove([path]);
+        await supabase.from("orders").delete().eq("id", order.id).eq("user_id", user.id);
+        throw fileError;
+      }
+      setSaved(true);
+      setSaveMessage("Draft saved privately to your workspace. No payment has been made.");
+    } catch (error) {
+      setExportError(error instanceof Error ? error.message : "Unable to save this draft. Please sign in and try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   const isInvoice = config.kind === "invoice";
@@ -289,8 +343,9 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
               {config.kind === "utility" && <div className="utility-doc"><div className="utility-doc-head"><div><span>DEMO STATEMENT</span><h3>{values.provider}</h3></div><b>UTILITY<br/>SAMPLE</b></div><div className="utility-watermark">SAMPLE · NOT VALID</div><div className="utility-doc-customer"><small>FICTIONAL CUSTOMER</small><strong>{values.customer}</strong><span>{values.serviceAddress}</span></div><div className="utility-doc-grid"><div><small>DEMO ACCOUNT</small><b>{values.accountRef}</b></div><div><small>BILLING PERIOD</small><b>{values.period}</b></div><div><small>SAMPLE DUE DATE</small><b>{values.dueDate}</b></div></div><div className="utility-amount"><span>SAMPLE AMOUNT</span><strong>{money(Number(values.amount))}</strong></div><div className="utility-disclaimer">FICTIONAL LAYOUT FOR DESIGN TESTING ONLY · NOT PROOF OF ADDRESS OR PAYMENT</div></div>}
             </div>
           </div>
-          <div className="export-actions"><button type="button" className="export-primary" onClick={downloadSvg}><Download size={17}/> Download SVG</button><button type="button" className="export-secondary" onClick={printPdf}><Printer size={17}/> Print / Save PDF</button></div>
+          <div className="export-actions"><button type="button" className="export-primary" onClick={downloadSvg}><Download size={17}/> Download SVG</button><button type="button" className="export-secondary" onClick={printPdf}><Printer size={17}/> Print / Save PDF</button><button type="button" className="export-secondary" onClick={saveToWorkspace} disabled={saving}>{saving ? "Saving…" : "Save to workspace"}</button></div>
           {saved && <p className="export-success"><ShieldCheck size={15}/> Your export is ready.</p>}
+          {saveMessage && <p className="export-success"><ShieldCheck size={15}/> {saveMessage}</p>}
           {exportError && <p className="export-error">{exportError}</p>}
           <p className="export-help"><FileDown size={14}/> To create a PDF, choose “Save as PDF” in your browser's print dialog.</p>
         </section>
