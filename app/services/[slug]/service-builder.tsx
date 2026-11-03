@@ -7,7 +7,12 @@ import { ArrowLeft, Download, FileDown, Info, Printer, RotateCcw, ShieldCheck } 
 type Values = Record<string, string>;
 type Field = { key: string; label: string; placeholder?: string; type?: string; wide?: boolean };
 
-const TODAY = new Date().toISOString().slice(0, 10);
+const TODAY = new Date().toISOString().slice(0, 10);\n
+const COUNTRY_CODES = ["AD","AE","AF","AG","AI","AL","AM","AO","AQ","AR","AS","AT","AU","AW","AX","AZ","BA","BB","BD","BE","BF","BG","BH","BI","BJ","BL","BM","BN","BO","BQ","BR","BS","BT","BV","BW","BY","BZ","CA","CC","CD","CF","CG","CH","CI","CK","CL","CM","CN","CO","CR","CU","CV","CW","CX","CY","CZ","DE","DJ","DK","DM","DO","DZ","EC","EE","EG","EH","ER","ES","ET","FI","FJ","FK","FM","FO","FR","GA","GB","GD","GE","GF","GG","GH","GI","GL","GM","GN","GP","GQ","GR","GS","GT","GU","GW","GY","HK","HM","HN","HR","HT","HU","ID","IE","IL","IM","IN","IO","IQ","IR","IS","IT","JE","JM","JO","JP","KE","KG","KH","KI","KM","KN","KP","KR","KW","KY","KZ","LA","LB","LC","LI","LK","LR","LS","LT","LU","LV","LY","MA","MC","MD","ME","MF","MG","MH","MK","ML","MM","MN","MO","MP","MQ","MR","MS","MT","MU","MV","MW","MX","MY","MZ","NA","NC","NE","NF","NG","NI","NL","NO","NP","NR","NU","NZ","OM","PA","PE","PF","PG","PH","PK","PL","PM","PN","PR","PS","PT","PW","PY","QA","RE","RO","RS","RU","RW","SA","SB","SC","SD","SE","SG","SH","SI","SJ","SK","SL","SM","SN","SO","SR","SS","ST","SV","SX","SY","SZ","TC","TD","TF","TG","TH","TJ","TK","TL","TM","TN","TO","TR","TT","TV","TW","TZ","UA","UG","UM","US","UY","UZ","VA","VC","VE","VG","VI","VN","VU","WF","WS","YE","YT","ZA","ZM","ZW"];
+const COUNTRY_NAMES = COUNTRY_CODES
+  .map((code) => ({ code, name: new Intl.DisplayNames(["en"], { type: "region" }).of(code) || code }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
 
 const configs: Record<string, { title: string; eyebrow: string; description: string; price: string; fields: Field[]; sample?: boolean; kind: string }> = {
   invoice: {
@@ -46,17 +51,17 @@ const configs: Record<string, { title: string; eyebrow: string; description: str
     ]
   },
   "passport-generator": {
-    title: "International passport application assistant",
+    title: "International passport application",
     eyebrow: "PASSPORT APPLICATION PREPARATION",
-    description: "Prepare your details, passport photograph and signature for submission to the relevant official passport authority. DocuBridge does not issue passports.",
+    description: "Select the passport authority country, complete the applicant details, add your existing passport dates where applicable, and prepare your application support pack. Passport issuance is handled only by the official authority.",
     price: "Application preparation",
     kind: "passport",
     fields: [
       { key: "fullName", label: "Full legal name", placeholder: "As shown on supporting identity records", wide: true },
-      { key: "country", label: "Passport issuing country", placeholder: "Enter any country", wide: true },
+      { key: "country", label: "Passport issuing country", placeholder: "Select a country", wide: true, type: "country" },
       { key: "applicationType", label: "Application type", placeholder: "New passport / renewal / replacement" },
       { key: "dateOfBirth", label: "Date of birth", type: "date" },
-      { key: "nationality", label: "Nationality", placeholder: "Your nationality" },
+      { key: "nationality", label: "Nationality", placeholder: "Select nationality", type: "country" },\n      { key: "passportIssueDate", label: "Existing passport issue date (if applicable)", type: "date" },\n      { key: "passportExpiryDate", label: "Existing passport expiry date (if applicable)", type: "date" },
       { key: "email", label: "Contact email", placeholder: "you@example.com", type: "email" },
       { key: "phone", label: "Contact telephone", placeholder: "Include country code" }
     ]
@@ -69,8 +74,8 @@ const configs: Record<string, { title: string; eyebrow: string; description: str
     kind: "licence",
     fields: [
       { key: "fullName", label: "Full legal name", placeholder: "As shown on your driving licence", wide: true },
-      { key: "country", label: "Country of current driving licence", placeholder: "Enter any country", wide: true },
-      { key: "destinationCountry", label: "Country where you plan to drive", placeholder: "Enter any country", wide: true },
+      { key: "country", label: "Country of current driving licence", placeholder: "Select a country", wide: true, type: "country" },
+      { key: "destinationCountry", label: "Country where you plan to drive", placeholder: "Select a country", wide: true, type: "country" },
       { key: "applicationType", label: "Service required", placeholder: "International driving permit / renewal / replacement" },
       { key: "licenceNumber", label: "Existing licence reference (optional)", placeholder: "Enter only if required by the authority" },
       { key: "dateOfBirth", label: "Date of birth", type: "date" },
@@ -189,7 +194,7 @@ function buildSvg(kind: string, v: Values, totals: { subtotal: number; tax: numb
     const rows = [
       ["Applicant", v.fullName], ["Issuing country", v.country], ["Destination country", v.destinationCountry],
       ["Application type", v.applicationType], ["Date of birth", v.dateOfBirth], ["Nationality", v.nationality],
-      ["Contact email", v.email], ["Telephone", v.phone], ["Existing licence reference", v.licenceNumber]
+      ["Nationality", v.nationality], ["Existing passport issue date", v.passportIssueDate], ["Existing passport expiry date", v.passportExpiryDate], ["Contact email", v.email], ["Telephone", v.phone], ["Existing licence reference", v.licenceNumber]
     ].filter((row) => row[1]).map((row, i) => text(65, 245 + i * 42, row[0] + ": " + row[1], 18, "#263746")).join("");
     return base(820, 760, '<rect x="0" y="0" width="820" height="16" fill="#1c302a"/>' +
       text(65, 92, "DOCUBRIDGE", 18, "#24856a", 700) + text(65, 155, title, 27, "#172b39", 700) +
@@ -240,7 +245,7 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "docubridge-" + slug + "-sample.svg";
+      link.download = "docubridge-" + slug + (isApplication ? "-application-summary.svg" : "-sample.svg");
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -331,14 +336,25 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
             {config.fields.map((field) => (
               <label className={field.wide ? "field field-wide" : "field"} key={field.key}>
                 <span>{field.label}</span>
-                <input
-                  type={field.type || "text"}
-                  min={field.type === "number" ? "0" : undefined}
-                  step={field.key === "taxRate" ? "0.01" : field.type === "number" ? "0.01" : undefined}
-                  value={values[field.key] ?? ""}
-                  placeholder={field.placeholder}
-                  onChange={(event) => update(field.key, event.target.value)}
-                />
+                {field.type === "country" ? (
+                  <select
+                    value={values[field.key] ?? ""}
+                    onChange={(event) => update(field.key, event.target.value)}
+                    required={field.key === "country"}
+                  >
+                    <option value="">{field.placeholder || "Select a country"}</option>
+                    {COUNTRY_NAMES.map((country) => <option key={country.code} value={country.name}>{country.name}</option>)}
+                  </select>
+                ) : (
+                  <input
+                    type={field.type || "text"}
+                    min={field.type === "number" ? "0" : undefined}
+                    step={field.key === "taxRate" ? "0.01" : field.type === "number" ? "0.01" : undefined}
+                    value={values[field.key] ?? ""}
+                    placeholder={field.placeholder}
+                    onChange={(event) => update(field.key, event.target.value)}
+                  />
+                )}
               </label>
             ))}
           </div>
@@ -349,7 +365,7 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
             <p className="upload-privacy"><ShieldCheck size={14}/> Files upload only when you save, and remain in your private account storage.</p>
           </div>}
           {isInvoice && <div className="totals-card"><div><span>Subtotal</span><strong>{money(totals.subtotal)}</strong></div><div><span>Tax</span><strong>{money(totals.tax)}</strong></div><div className="grand-total"><span>Total due</span><strong>{money(totals.total)}</strong></div></div>}
-          <div className="privacy-note"><ShieldCheck size={16}/><span>Your entries stay in this browser preview. They are not uploaded or saved to an account.</span></div>
+          <div className="privacy-note"><ShieldCheck size={16}/><span>{isApplication ? "Your personal details stay in this browser until you save the application pack to your private workspace." : "Your entries stay in this browser preview. They are not uploaded or saved to an account."}</span></div>
         </section>
 
         <section className="preview-panel">
@@ -365,12 +381,12 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
               </>}
               {config.kind === "certificate" && <div className="certificate-doc"><div className="cert-kicker">AWARD OF RECOGNITION</div><div className="cert-rule"/><h3>{values.achievement}</h3><p>This certificate is proudly presented to</p><div className="cert-recipient">{values.recipient}</div><p>For {values.course}</p><div className="cert-footer"><div><b>{values.issuer}</b><span>Presented by</span></div><div><b>{values.issueDate}</b><span>Date issued</span></div></div><small>{values.certificateId}</small></div>}
               {config.kind === "id" && <div className="id-card-doc"><div className="id-card-band"><span>{values.organization}</span><small>ORGANISATION ACCESS CARD</small></div><div className="id-card-body"><div className="avatar-placeholder">{(values.fullName || "A").slice(0,1).toUpperCase()}</div><div className="id-details"><strong>{values.fullName}</strong><b>{values.role}</b><span>BADGE REF · {values.cardId}</span><span>{values.email}</span><span>VALID THROUGH · {values.validity}</span></div></div><div className="id-card-foot">ORGANISATION ISSUED · NOT A GOVERNMENT ID</div></div>}
-              {config.kind === "passport" && <div className="application-summary-preview"><strong>PASSPORT APPLICATION SUMMARY</strong><span>{values.fullName || "Applicant name"}</span><small>{values.country || "Issuing country"} · {values.applicationType || "Application type"}</small><small>Photograph: {passportPhoto ? "Selected" : "Not attached"} · Signature: {signatureFile ? "Selected" : "Not attached"}</small><em>APPLICATION PREPARATION ONLY — NOT A PASSPORT</em></div>}
+              {config.kind === "passport" && <div className="application-summary-preview"><strong>PASSPORT APPLICATION SUMMARY</strong><span>{values.fullName || "Applicant name"}</span><small>{values.country || "Issuing country"} · {values.applicationType || "Application type"}</small><small>Existing passport issue date: {values.passportIssueDate || "Not provided"}</small><small>Existing passport expiry date: {values.passportExpiryDate || "Not provided"}</small><small>Photograph: {passportPhoto ? "Selected" : "Not attached"} · Signature: {signatureFile ? "Selected" : "Not attached"}</small><em>APPLICATION PREPARATION ONLY — NOT A PASSPORT</em></div>}
               {config.kind === "licence" && <div className="application-summary-preview"><strong>INTERNATIONAL DRIVING PERMIT APPLICATION</strong><span>{values.fullName || "Applicant name"}</span><small>{values.country || "Current licence country"} → {values.destinationCountry || "Destination country"}</small><small>Photograph: {passportPhoto ? "Selected" : "Not attached"} · Signature: {signatureFile ? "Selected" : "Not attached"}</small><em>APPLICATION PREPARATION ONLY — NOT A DRIVING LICENCE</em></div>}
               {config.kind === "utility" && <div className="utility-doc"><div className="utility-doc-head"><div><span>DEMO STATEMENT</span><h3>{values.provider}</h3></div><b>UTILITY<br/>SAMPLE</b></div><div className="utility-watermark">SAMPLE · NOT VALID</div><div className="utility-doc-customer"><small>FICTIONAL CUSTOMER</small><strong>{values.customer}</strong><span>{values.serviceAddress}</span></div><div className="utility-doc-grid"><div><small>DEMO ACCOUNT</small><b>{values.accountRef}</b></div><div><small>BILLING PERIOD</small><b>{values.period}</b></div><div><small>SAMPLE DUE DATE</small><b>{values.dueDate}</b></div></div><div className="utility-amount"><span>SAMPLE AMOUNT</span><strong>{money(Number(values.amount))}</strong></div><div className="utility-disclaimer">FICTIONAL LAYOUT FOR DESIGN TESTING ONLY · NOT PROOF OF ADDRESS OR PAYMENT</div></div>}
             </div>
           </div>
-          <div className="export-actions"><button type="button" className="export-primary" onClick={downloadSvg}><Download size={17}/> Download SVG</button><button type="button" className="export-secondary" onClick={printPdf}><Printer size={17}/> Print / Save PDF</button><button type="button" className="export-secondary" onClick={saveToWorkspace} disabled={saving}>{saving ? "Saving…" : "Save to workspace"}</button></div>
+          <div className="export-actions"><button type="button" className="export-primary" onClick={downloadSvg}><Download size={17}/> {isApplication ? "Generate application pack" : "Download SVG"}</button><button type="button" className="export-secondary" onClick={printPdf}><Printer size={17}/> Print / Save PDF</button><button type="button" className="export-secondary" onClick={saveToWorkspace} disabled={saving}>{saving ? "Saving…" : "Save to workspace"}</button></div>
           {saved && <p className="export-success"><ShieldCheck size={15}/> Your export is ready.</p>}
           {saveMessage && <p className="export-success"><ShieldCheck size={15}/> {saveMessage}</p>}
           {exportError && <p className="export-error">{exportError}</p>}
