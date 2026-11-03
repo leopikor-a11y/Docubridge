@@ -1,8 +1,8 @@
 const services = [
   ["Invoice & receipt builder","Create clean business documents."],
   ["ID card templates","Employee, membership and event cards."],
-  ["Passport application help","Guidance, checklists and photo preparation."],
-  ["Driving licence application help","Application guidance and document checklists."],
+  ["Passport Generator","Create clearly marked, non-valid passport-style sample mockups."],
+  ["Driving Licence Generator","Create clearly marked, non-valid driving-licence-style sample mockups."],
   ["Utility bill sample layouts","Clearly marked fictional examples for design/testing."],
   ["QR code creator","Create QR codes for links and contact details."],
   ["Barcode creator","Generate common retail and inventory barcodes."],
@@ -25,7 +25,7 @@ export default function Home() {
     </section>
     <section className="section wrap" id="services">
       <div className="sectionHead"><div><div className="eyebrow">WHAT YOU CAN DO</div><h2>Document services</h2></div><p>Choose a service and follow a guided workflow.</p></div>
-      <div className="serviceGrid">{services.map(([name,desc],i)=><article className="serviceCard" key={name}><div className="serviceIcon">{["▤","▣","◎","▧","▥","⌗","▦","✧"][i]}</div><h3>{name}</h3><p>{desc}</p><a href={["/services/invoice","/services/id-cards","/services/passport-help","/services/licence-help","/services/utility-sample","/tools","/tools","/services/certificates"][i]}>Explore service <span>↗</span></a></article>)}</div>
+      <div className="serviceGrid">{services.map(([name,desc],i)=><article className="serviceCard" key={name}><div className="serviceIcon">{["▤","▣","◎","▧","▥","⌗","▦","✧"][i]}</div><h3>{name}</h3><p>{desc}</p><a href={["/services/invoice","/services/id-cards","/services/passport-generator","/services/driving-licence-generator","/services/utility-sample","/tools","/tools","/services/certificates"][i]}>Explore service <span>↗</span></a></article>)}</div>
     </section>
     <section className="toolsBand" id="tools"><div className="wrap toolsInner"><div><div className="eyebrow">QUICK UTILITIES</div><h2>Useful tools, ready when you are.</h2><p>Simple utilities for common document and image tasks.</p></div><div className="toolList">{tools.map(t=><a className="toolLink" href="/tools" key={t}><span>✦</span>{t}<b>→</b></a>)}</div></div></section>
     <section className="section wrap" id="pricing"><div className="eyebrow">SIMPLE CHECKOUT</div><h2>Pay only for what you use.</h2><p className="muted">Prices are displayed in USD. The final amount is shown before checkout.</p><div className="pricingCard"><div><h3>One document at a time</h3><p>No subscription required. Select a service, review the price and pay when your document is ready.</p></div><div className="priceTag">USD <strong>Pay per use</strong></div></div></section>
