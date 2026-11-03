@@ -193,20 +193,53 @@ function buildSvg(kind: string, v: Values, totals: { subtotal: number; tax: numb
   if (kind === "id") {
     return base(900, 560, '<rect x="0" y="0" width="900" height="112" fill="#142d3b"/><circle cx="125" cy="272" r="72" fill="#e3edf0"/><text x="125" y="292" text-anchor="middle" font-family="Arial" font-size="58" font-weight="700" fill="#0e766e">' + xml((v.fullName || "A").slice(0, 1).toUpperCase()) + "</text>" + text(54, 70, v.organization.toUpperCase(), 27, "#ffffff", 700) + text(250, 230, v.fullName, 34, "#142d3b", 700) + text(250, 285, v.role, 23, "#0e766e", 700) + text(250, 360, "BADGE REF  " + v.cardId, 19) + text(250, 410, v.email, 18, "#64748b") + text(250, 460, "VALID THROUGH  " + v.validity, 16, "#64748b") + '<rect x="730" y="476" width="120" height="38" rx="8" fill="#e8f1f1"/>' + text(790, 502, "MEMBER", 15, "#0e766e", 700).replace('x="790"', 'x="790" text-anchor="middle"'), "#f8fbfc");
   }
-  if (kind === "passport" || kind === "licence") {
-    const title = kind === "passport" ? "PASSPORT APPLICATION SUMMARY" : "DRIVING PERMIT APPLICATION SUMMARY";
+
+  if (kind === "passport") {
+    const left = '<rect x="18" y="18" width="565" height="724" rx="22" fill="#f7f3e8" stroke="#c8c0a9" stroke-width="2"/>' +
+      '<rect x="598" y="18" width="584" height="724" rx="22" fill="#fbf8ee" stroke="#c8c0a9" stroke-width="2"/>' +
+      '<rect x="34" y="34" width="533" height="692" rx="14" fill="none" stroke="#d9d1bc" stroke-width="1"/>' +
+      '<rect x="614" y="34" width="552" height="692" rx="14" fill="none" stroke="#d9d1bc" stroke-width="1"/>';
+    const cover = text(65, 105, "DOCUBRIDGE · LEARNING EDITION", 15, "#426859", 700) +
+      '<circle cx="300" cy="285" r="92" fill="#e4e8dd" stroke="#9eae9f" stroke-width="2"/>' +
+      '<path d="M260 285h80M300 245v80" stroke="#9eae9f" stroke-width="3"/>' +
+      text(300, 430, "EDUCATIONAL", 32, "#315747", 700).replace('x="300"', 'x="300" text-anchor="middle"') +
+      text(300, 474, "PASSPORT MOCKUP", 25, "#315747", 700).replace('x="300"', 'x="300" text-anchor="middle"') +
+      text(300, 535, "FICTIONAL DESIGN SPECIMEN", 13, "#64756a", 700).replace('x="300"', 'x="300" text-anchor="middle"') +
+      text(300, 660, "NOT ISSUED BY ANY GOVERNMENT", 12, "#9b473f", 700).replace('x="300"', 'x="300" text-anchor="middle"');
+    const details = [
+      ["Full name", v.fullName], ["Nationality", v.nationality], ["Date of birth", v.dateOfBirth],
+      ["Issuing country (selected)", v.country], ["Issue date (existing)", v.passportIssueDate],
+      ["Expiry date (existing)", v.passportExpiryDate], ["Application type", v.applicationType],
+      ["Contact email", v.email], ["Telephone", v.phone]
+    ].filter((row) => row[1]).map((row,i) => {
+      const y=305+i*43;
+      return text(770,y,row[0].toUpperCase(),10,"#738176",700)+text(770,y+22,String(row[1]),15,"#263b33",700);
+    }).join("");
+    const info = text(650, 92, "DOCUBRIDGE · EDUCATIONAL SPECIMEN", 13, "#426859", 700) +
+      text(650, 150, "PERSONAL DETAILS", 24, "#263b33", 700) +
+      '<rect x="650" y="178" width="156" height="100" rx="7" fill="#e2e8dd" stroke="#aab8a7"/>' +
+      text(728, 222, v.fullName ? String(v.fullName).slice(0,1).toUpperCase() : "PHOTO", 31, "#54705f", 700).replace('x="728"', 'x="728" text-anchor="middle"') +
+      text(728, 253, "PHOTO AREA", 10, "#54705f", 700).replace('x="728"', 'x="728" text-anchor="middle"') +
+      details +
+      '<rect x="650" y="660" width="500" height="44" rx="6" fill="#f0e4d6" stroke="#d9bca9"/>' +
+      text(668, 687, "EDUCATIONAL SAMPLE — NOT VALID", 16, "#9b3f37", 700);
+    const watermark='<g transform="rotate(-24 600 380)" opacity="0.19"><text x="600" y="400" text-anchor="middle" font-family="Arial, sans-serif" font-size="78" font-weight="700" fill="#a83232">EDUCATIONAL SAMPLE · NOT VALID</text></g>';
+    const spine='<rect x="580" y="28" width="18" height="704" rx="8" fill="#d7cfbb"/><path d="M589 42V718" stroke="#b7ad96" stroke-width="1"/>';
+    return base(1200,760,left+cover+info+spine+watermark,"#e9e5d9");
+  }
+  if (kind === "licence") {
     const rows = [
-      ["Applicant", v.fullName], ["Issuing country", v.country], ["Destination country", v.destinationCountry],
-      ["Application type", v.applicationType], ["Date of birth", v.dateOfBirth], ["Nationality", v.nationality],
-      ["Nationality", v.nationality], ["Existing passport issue date", v.passportIssueDate], ["Existing passport expiry date", v.passportExpiryDate], ["Contact email", v.email], ["Telephone", v.phone], ["Existing licence reference", v.licenceNumber]
+      ["Applicant", v.fullName], ["Current licence country", v.country], ["Destination country", v.destinationCountry],
+      ["Service required", v.applicationType], ["Date of birth", v.dateOfBirth], ["Existing licence reference", v.licenceNumber],
+      ["Contact email", v.email], ["Telephone", v.phone]
     ].filter((row) => row[1]).map((row, i) => text(65, 245 + i * 42, row[0] + ": " + row[1], 18, "#263746")).join("");
     const unpaidMark = '<g transform="rotate(-24 410 390)" opacity="0.18"><text x="410" y="410" text-anchor="middle" font-family="Arial, sans-serif" font-size="102" font-weight="700" fill="#a83232">UNPAID</text></g>';
     return base(820, 760, '<rect x="0" y="0" width="820" height="16" fill="#1c302a"/>' +
-      text(65, 92, "DOCUBRIDGE", 18, "#24856a", 700) + text(65, 155, title, 27, "#172b39", 700) +
+      text(65, 92, "DOCUBRIDGE", 18, "#24856a", 700) + text(65, 155, "DRIVING PERMIT APPLICATION SUMMARY", 27, "#172b39", 700) +
       text(65, 190, "Applicant-prepared information for official submission", 15, "#64748b") +
       '<path d="M65 210H755" stroke="#dbe5e8"/>' + rows + unpaidMark +
       '<rect x="55" y="635" width="710" height="75" rx="10" fill="#edf4ef"/>' +
-      text(75, 665, "PREPARATION DOCUMENT — NOT AN OFFICIAL IDENTITY OR TRAVEL DOCUMENT", 13, "#23634d", 700) +
+      text(75, 665, "PREPARATION DOCUMENT — NOT AN OFFICIAL DRIVING LICENCE", 13, "#23634d", 700) +
       text(75, 690, "Submit through the relevant government or authorised issuing authority.", 13, "#526878"));
   }
   return base(820, 720, '<rect x="0" y="0" width="820" height="120" fill="#193d4b"/>' + text(60, 75, v.provider, 30, "#ffffff", 700) + text(60, 190, "SAMPLE STATEMENT", 28, "#193d4b", 700) + text(60, 245, "ACCOUNT HOLDER  " + v.customer, 18) + text(60, 292, "SERVICE LOCATION  " + v.serviceAddress, 17, "#64748b") + text(60, 345, "ACCOUNT REF  " + v.accountRef, 17) + text(60, 390, "BILLING PERIOD  " + v.period, 17) + '<path d="M60 430H760" stroke="#dbe5e8"/>' + text(60, 500, "SAMPLE AMOUNT", 18, "#64748b") + text(60, 550, money(Number(v.amount)), 34, "#0e766e", 700) + '<g transform="rotate(-15 420 360)">' + text(420, 370, "SAMPLE • NOT VALID", 58, "#d34b45", 700).replace('x="420"', 'x="420" text-anchor="middle"') + "</g>", "#ffffff");
@@ -397,7 +430,38 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
               </>}
               {config.kind === "certificate" && <div className="certificate-doc"><div className="cert-kicker">AWARD OF RECOGNITION</div><div className="cert-rule"/><h3>{values.achievement}</h3><p>This certificate is proudly presented to</p><div className="cert-recipient">{values.recipient}</div><p>For {values.course}</p><div className="cert-footer"><div><b>{values.issuer}</b><span>Presented by</span></div><div><b>{values.issueDate}</b><span>Date issued</span></div></div><small>{values.certificateId}</small></div>}
               {config.kind === "id" && <div className="id-card-doc"><div className="id-card-band"><span>{values.organization}</span><small>ORGANISATION ACCESS CARD</small></div><div className="id-card-body"><div className="avatar-placeholder">{(values.fullName || "A").slice(0,1).toUpperCase()}</div><div className="id-details"><strong>{values.fullName}</strong><b>{values.role}</b><span>BADGE REF · {values.cardId}</span><span>{values.email}</span><span>VALID THROUGH · {values.validity}</span></div></div><div className="id-card-foot">ORGANISATION ISSUED · NOT A GOVERNMENT ID</div></div>}
-              {config.kind === "passport" && <div className="application-summary-preview"><span className="application-watermark">UNPAID</span><strong>PASSPORT APPLICATION SUMMARY</strong><span>{values.fullName || "Applicant name"}</span><small>{values.country || "Issuing country"} · {values.applicationType || "Application type"}</small><small>Existing passport issue date: {values.passportIssueDate || "Not provided"}</small><small>Existing passport expiry date: {values.passportExpiryDate || "Not provided"}</small><small>Photograph: {passportPhoto ? "Selected" : "Not attached"} · Signature: {signatureFile ? "Selected" : "Not attached"}</small><em>APPLICATION PREPARATION ONLY — NOT A PASSPORT</em></div>}
+              {config.kind === "passport" && <div className="passport-booklet" aria-label="Educational passport mockup, not valid for travel">
+                <div className="passport-open-spread">
+                  <section className="passport-left-page">
+                    <div className="passport-specimen-label">DOCUBRIDGE · LEARNING EDITION</div>
+                    <div className="passport-emblem" aria-hidden="true"><span>✦</span></div>
+                    <div className="passport-cover-title">EDUCATIONAL<br/>PASSPORT MOCKUP</div>
+                    <div className="passport-cover-subtitle">FICTIONAL DESIGN SPECIMEN</div>
+                    <div className="passport-cover-foot">NOT ISSUED BY ANY GOVERNMENT</div>
+                  </section>
+                  <section className="passport-right-page">
+                    <div className="passport-page-kicker">DOCUBRIDGE · EDUCATIONAL SPECIMEN</div>
+                    <h3>Personal details</h3>
+                    <div className="passport-identity-layout">
+                      <div className="passport-photo-slot">{passportPhoto ? <span>PHOTO<br/>ATTACHED</span> : <span>PHOTO<br/>AREA</span>}</div>
+                      <div className="passport-fields">
+                        <div><small>FULL NAME</small><strong>{values.fullName || "Applicant name"}</strong></div>
+                        <div><small>NATIONALITY</small><strong>{values.nationality || "Not provided"}</strong></div>
+                        <div><small>DATE OF BIRTH</small><strong>{values.dateOfBirth || "Not provided"}</strong></div>
+                        <div><small>ISSUING COUNTRY</small><strong>{values.country || "Not selected"}</strong></div>
+                        <div className="passport-date-pair"><div><small>ISSUE DATE (EXISTING)</small><strong>{values.passportIssueDate || "Not provided"}</strong></div><div><small>EXPIRY DATE (EXISTING)</small><strong>{values.passportExpiryDate || "Not provided"}</strong></div></div>
+                        <div><small>APPLICATION TYPE</small><strong>{values.applicationType || "Not specified"}</strong></div>
+                        <div><small>CONTACT</small><strong>{values.email || "Not provided"} {values.phone ? " · " + values.phone : ""}</strong></div>
+                      </div>
+                    </div>
+                    <div className="passport-fictional-reference">EDUCATIONAL REFERENCE · EDU-DB-SAMPLE</div>
+                    <div className="passport-validity-mark">EDUCATIONAL SAMPLE — NOT VALID</div>
+                    <div className="passport-page-number">01</div>
+                  </section>
+                  <div className="passport-spine" aria-hidden="true"/>
+                </div>
+                <div className="passport-preview-caption">Illustrative layout only. No government authority, travel validity or identity verification is represented.</div>
+              </div>}
               {config.kind === "licence" && <div className="application-summary-preview"><span className="application-watermark">UNPAID</span><strong>INTERNATIONAL DRIVING PERMIT APPLICATION</strong><span>{values.fullName || "Applicant name"}</span><small>{values.country || "Current licence country"} → {values.destinationCountry || "Destination country"}</small><small>Photograph: {passportPhoto ? "Selected" : "Not attached"} · Signature: {signatureFile ? "Selected" : "Not attached"}</small><em>APPLICATION PREPARATION ONLY — NOT A DRIVING LICENCE</em></div>}
               {config.kind === "utility" && <div className="utility-doc"><div className="utility-doc-head"><div><span>DEMO STATEMENT</span><h3>{values.provider}</h3></div><b>UTILITY<br/>SAMPLE</b></div><div className="utility-watermark">SAMPLE · NOT VALID</div><div className="utility-doc-customer"><small>FICTIONAL CUSTOMER</small><strong>{values.customer}</strong><span>{values.serviceAddress}</span></div><div className="utility-doc-grid"><div><small>DEMO ACCOUNT</small><b>{values.accountRef}</b></div><div><small>BILLING PERIOD</small><b>{values.period}</b></div><div><small>SAMPLE DUE DATE</small><b>{values.dueDate}</b></div></div><div className="utility-amount"><span>SAMPLE AMOUNT</span><strong>{money(Number(values.amount))}</strong></div><div className="utility-disclaimer">FICTIONAL LAYOUT FOR DESIGN TESTING ONLY · NOT PROOF OF ADDRESS OR PAYMENT</div></div>}
             </div>
