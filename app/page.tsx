@@ -1,35 +1,41 @@
 const services = [
-  ["Invoice & receipt builder","Create clean business documents."],
-  ["ID card templates","Employee, membership and event cards."],
-  ["Passport Generator","Create clearly marked, non-valid passport-style sample mockups."],
-  ["Driving Licence Generator","Create clearly marked, non-valid driving-licence-style sample mockups."],
-  ["Utility bill sample layouts","Clearly marked fictional examples for design/testing."],
-  ["QR code creator","Create QR codes for links and contact details."],
-  ["Barcode creator","Generate common retail and inventory barcodes."],
-  ["Certificates","Build certificates for courses and events."]
+  { title: "Invoice & receipt", desc: "Professional invoices with automatic totals and a clean print-ready layout.", href: "/services/invoice", icon: "↗", tag: "BUSINESS" },
+  { title: "Organisation ID cards", desc: "Employee, member and event badges for your organisation.", href: "/services/id-cards", icon: "▣", tag: "BADGES" },
+  { title: "Certificate designer", desc: "Elegant certificates for courses, workshops and recognition.", href: "/services/certificates", icon: "✧", tag: "AWARDS" },
+  { title: "QR & barcode studio", desc: "Generate QR codes and common barcode formats in your browser.", href: "/tools", icon: "⌗", tag: "QUICK TOOL" },
+  { title: "Fictional passport prop", desc: "Create an unmistakably fictional creative prop for stories and demos.", href: "/services/passport-generator", icon: "◇", tag: "CREATIVE SAMPLE" },
+  { title: "Fictional licence prop", desc: "Design a fictional mobility-club prop card for creative projects.", href: "/services/driving-licence-generator", icon: "▤", tag: "CREATIVE SAMPLE" },
+  { title: "Utility statement sample", desc: "Build a fictional statement layout for design and testing only.", href: "/services/utility-sample", icon: "▧", tag: "DESIGN SAMPLE" }
 ];
-const tools = ["PDF tools","Image resize & conversion","PDF merge","Passport photo preparation","Signature creator","QR & barcode tools"];
 
 export default function Home() {
-  return <main>
-    <nav className="nav wrap">
-      <a className="brand" href="#"><span className="brandMark">D</span> DocuBridge</a>
-      <div className="navLinks"><a href="#services">Services</a><a href="#tools">Digital tools</a><a href="#pricing">Pricing</a><a className="navButton" href="/account">Sign in</a></div>
-    </nav>
-    <section className="hero wrap">
-      <div className="eyebrow">DOCUMENTS • DIGITAL TOOLS • SIMPLE WORKFLOWS</div>
-      <h1>Important documents.<br/><em>Made simpler.</em></h1>
-      <p className="heroText">Prepare everyday business documents, organise application paperwork and use practical digital tools — all in one place.</p>
-      <div className="heroActions"><a className="button primary" href="#services">Explore services</a><a className="button secondary" href="#tools">Browse digital tools</a></div>
-      <div className="trustLine"><span>✓ Pay per document</span><span>✓ Clear USD pricing</span><span>✓ Download-ready workflows</span></div>
+  return <main className="home-shell">
+    <header className="topbar">
+      <a className="brand-lockup" href="/"><span className="brand-symbol">d.</span><span>docubridge</span></a>
+      <nav className="topnav"><a href="#services">Services</a><a href="/tools">QR & barcode</a><a href="/dashboard">My workspace</a></nav>
+      <a className="topbar-cta" href="/account">Sign in <span>↗</span></a>
+    </header>
+    <section className="hero-v2">
+      <div className="hero-copy">
+        <div className="hero-chip"><span/> YOUR DOCUMENT WORKSPACE</div>
+        <h1>Make paperwork<br/><em>feel effortless.</em></h1>
+        <p>Thoughtful tools for the documents your work and everyday projects depend on. Create, preview and export — all in one simple workspace.</p>
+        <div className="hero-buttons"><a href="#services" className="hero-primary">Explore the studio <span>→</span></a><a href="/tools" className="hero-secondary">Try quick tools</a></div>
+        <div className="hero-proof"><span>✓ Live previews</span><span>✓ Easy PDF printing</span><span>✓ Simple workflows</span></div>
+      </div>
+      <div className="hero-art" aria-label="Document preview illustration">
+        <div className="art-orbit orbit-one"/><div className="art-orbit orbit-two"/>
+        <div className="art-card art-back"><div className="art-mini-line"/><div className="art-mini-line short"/><div className="art-mini-box"/></div>
+        <div className="art-card art-front"><div className="art-card-top"><span>DOCUBRIDGE</span><b>↗</b></div><div className="art-doc-title">Your next<br/>great document.</div><div className="art-doc-line"/><div className="art-doc-line short"/><div className="art-doc-footer"><span>PREVIEW READY</span><b>✓</b></div></div>
+        <div className="art-float"><span>✦</span> Made simple</div>
+      </div>
     </section>
-    <section className="section wrap" id="services">
-      <div className="sectionHead"><div><div className="eyebrow">WHAT YOU CAN DO</div><h2>Document services</h2></div><p>Choose a service and follow a guided workflow.</p></div>
-      <div className="serviceGrid">{services.map(([name,desc],i)=><article className="serviceCard" key={name}><div className="serviceIcon">{["▤","▣","◎","▧","▥","⌗","▦","✧"][i]}</div><h3>{name}</h3><p>{desc}</p><a href={["/services/invoice","/services/id-cards","/services/passport-generator","/services/driving-licence-generator","/services/utility-sample","/tools","/tools","/services/certificates"][i]}>Explore service <span>↗</span></a></article>)}</div>
+    <section className="services-v2" id="services">
+      <div className="section-intro"><div><div className="section-kicker">THE DOCUBRIDGE STUDIO</div><h2>What would you like<br/>to create today?</h2></div><p>Pick a tool to open its guided editor. Your changes appear in a live preview, ready to export.</p></div>
+      <div className="service-grid-v2">{services.map((s,i)=><a className={"service-tile tile-"+i} href={s.href} key={s.title}><div className="tile-top"><span className="tile-icon">{s.icon}</span><span className="tile-tag">{s.tag}</span></div><div className="tile-bottom"><h3>{s.title}</h3><p>{s.desc}</p><span className="tile-link">Open editor <b>↗</b></span></div></a>)}</div>
     </section>
-    <section className="toolsBand" id="tools"><div className="wrap toolsInner"><div><div className="eyebrow">QUICK UTILITIES</div><h2>Useful tools, ready when you are.</h2><p>Simple utilities for common document and image tasks.</p></div><div className="toolList">{tools.map(t=><a className="toolLink" href="/tools" key={t}><span>✦</span>{t}<b>→</b></a>)}</div></div></section>
-    <section className="section wrap" id="pricing"><div className="eyebrow">SIMPLE CHECKOUT</div><h2>Pay only for what you use.</h2><p className="muted">Prices are displayed in USD. The final amount is shown before checkout.</p><div className="pricingCard"><div><h3>One document at a time</h3><p>No subscription required. Select a service, review the price and pay when your document is ready.</p></div><div className="priceTag">USD <strong>Pay per use</strong></div></div></section>
-    <section className="accountBand" id="account"><div className="wrap accountInner"><div><div className="eyebrow">YOUR WORKSPACE</div><h2>Keep every order in one place.</h2><p>Customer accounts, order history and an administration workspace are planned for the production release.</p></div><a className="button primary" href="/account">Open your workspace</a></div></section>
-    <footer className="wrap footer"><a className="brand" href="#"><span className="brandMark">D</span> DocuBridge</a><p>© {new Date().getFullYear()} DocuBridge. All rights reserved.</p><small>Government application assistance only. No counterfeit identity documents or false proof-of-address documents.</small></footer>
+    <section className="workflow-band"><div className="workflow-inner"><div><div className="section-kicker light">A BETTER WAY TO GET IT DONE</div><h2>From blank page<br/>to ready-to-share.</h2><p>No complicated software. Just a clear process that keeps you moving.</p></div><div className="workflow-steps"><div><b>01</b><span><strong>Choose a tool</strong><small>Start with the document you need.</small></span></div><div><b>02</b><span><strong>Make it yours</strong><small>Fill in the details and see changes instantly.</small></span></div><div><b>03</b><span><strong>Export and go</strong><small>Download an SVG or save a PDF from print.</small></span></div></div></div></section>
+    <section className="bottom-cta"><div><div className="section-kicker">YOUR WORKSPACE</div><h2>Ready when you are.</h2><p>Sign in to access your DocuBridge account.</p></div><a href="/account" className="hero-primary">Open my account <span>→</span></a></section>
+    <footer className="footer-v2"><a className="brand-lockup" href="/"><span className="brand-symbol">d.</span><span>docubridge</span></a><span>© {new Date().getFullYear()} DocuBridge</span><small>Fictional sample designs are clearly marked and are not valid official documents or proof of address.</small></footer>
   </main>;
 }
