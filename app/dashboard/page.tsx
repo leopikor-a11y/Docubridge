@@ -7,8 +7,8 @@ export const metadata = { title: "Dashboard | DocuBridge" };
 const labels: Record<string,string> = {
   invoice: "Invoice & receipt builder",
   "id-cards": "Organisation ID card",
-  "passport-generator": "Fictional passport prop",
-  "driving-licence-generator": "Fictional driving-card prop",
+  "passport-generator": "Passport application support",
+  "driving-licence-generator": "Driving permit application support",
   "utility-sample": "Utility statement sample",
   certificates: "Certificate designer"
 };
