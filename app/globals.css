@@ -140,3 +140,15 @@
 .passport-spine{position:absolute;z-index:3;top:16px;bottom:16px;left:50%;width:13px;transform:translateX(-50%);background:linear-gradient(90deg,#c7beaa,#eee8d9 45%,#bfb59f);box-shadow:0 0 8px #6b645326}
 .passport-preview-caption{margin-top:10px;text-align:center;font:10px/1.6 'DM Sans',sans-serif;color:#7b887e}
 @media(max-width:650px){.passport-open-spread{grid-template-columns:1fr;padding:8px}.passport-left-page{min-height:330px;border-radius:8px 8px 2px 2px}.passport-right-page{min-height:430px;border-radius:2px 2px 8px 8px}.passport-spine{display:none}.passport-emblem{margin:32px auto 18px}.passport-identity-layout{grid-template-columns:92px minmax(0,1fr);gap:10px}.passport-photo-slot{height:125px}.passport-right-page{padding:20px 16px}}
+
+/* Dynamic selected-country theme for the educational passport */
+.passport-left-page,.passport-right-page{background:radial-gradient(ellipse at 50% 45%,#fffdf8,var(--passport-light,#f2eddf) 82%);border-color:var(--passport-accent,#d7cfbd)}
+.passport-left-page:before,.passport-right-page:before{border-color:color-mix(in srgb,var(--passport-primary,#315747) 25%,transparent)}
+.passport-specimen-label,.passport-page-kicker{color:var(--passport-primary,#567565)}
+.passport-emblem{border-color:var(--passport-accent,#9aac99);color:var(--passport-primary,#63806d);background:radial-gradient(circle,#fffdf8 0 38%,var(--passport-light,#e7e5d7) 39% 100%)}
+.passport-emblem span{font-size:37px}
+.passport-country-name{position:relative;margin-top:-13px;margin-bottom:13px;font:900 16px Manrope,sans-serif;letter-spacing:.13em;color:var(--passport-primary,#315747)}
+.passport-cover-title,.passport-right-page h3{color:var(--passport-primary,#315747)}
+.passport-photo-slot{border-color:var(--passport-accent,#aeb9a8);background:linear-gradient(145deg,#fffdf8,var(--passport-light,#dce3d8))}
+.passport-fields small{color:var(--passport-primary,#718075)}
+.passport-spine{background:linear-gradient(90deg,var(--passport-accent,#c7beaa),#eee8d9 45%,var(--passport-accent,#bfb59f))}
