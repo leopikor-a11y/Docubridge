@@ -3,8 +3,8 @@ const services = [
   { title: "Organisation ID cards", desc: "Employee, member and event badges for your organisation.", href: "/services/id-cards", icon: "▣", tag: "BADGES" },
   { title: "Certificate designer", desc: "Elegant certificates for courses, workshops and recognition.", href: "/services/certificates", icon: "✧", tag: "AWARDS" },
   { title: "QR & barcode studio", desc: "Generate QR codes and common barcode formats in your browser.", href: "/tools", icon: "⌗", tag: "QUICK TOOL" },
-  { title: "Fictional passport prop", desc: "Create an unmistakably fictional creative prop for stories and demos.", href: "/services/passport-generator", icon: "◇", tag: "CREATIVE SAMPLE" },
-  { title: "Fictional licence prop", desc: "Design a fictional mobility-club prop card for creative projects.", href: "/services/driving-licence-generator", icon: "▤", tag: "CREATIVE SAMPLE" },
+  { title: "International passport assistance", desc: "Prepare passport application details, photograph and signature for official submission.", href: "/services/passport-generator", icon: "◇", tag: "APPLICATION SUPPORT" },
+  { title: "International driving licence assistance", desc: "Prepare driving permit application details and supporting photographs for an authorised issuer.", href: "/services/driving-licence-generator", icon: "▤", tag: "APPLICATION SUPPORT" },
   { title: "Utility statement sample", desc: "Build a fictional statement layout for design and testing only.", href: "/services/utility-sample", icon: "▧", tag: "DESIGN SAMPLE" }
 ];
 
@@ -36,6 +36,6 @@ export default function Home() {
     </section>
     <section className="workflow-band"><div className="workflow-inner"><div><div className="section-kicker light">A BETTER WAY TO GET IT DONE</div><h2>From blank page<br/>to ready-to-share.</h2><p>No complicated software. Just a clear process that keeps you moving.</p></div><div className="workflow-steps"><div><b>01</b><span><strong>Choose a tool</strong><small>Start with the document you need.</small></span></div><div><b>02</b><span><strong>Make it yours</strong><small>Fill in the details and see changes instantly.</small></span></div><div><b>03</b><span><strong>Export and go</strong><small>Download an SVG or save a PDF from print.</small></span></div></div></div></section>
     <section className="bottom-cta"><div><div className="section-kicker">YOUR WORKSPACE</div><h2>Ready when you are.</h2><p>Sign in to access your DocuBridge account.</p></div><a href="/account" className="hero-primary">Open my account <span>→</span></a></section>
-    <footer className="footer-v2"><a className="brand-lockup" href="/"><span className="brand-symbol">d.</span><span>docubridge</span></a><span>© {new Date().getFullYear()} DocuBridge</span><small>Fictional sample designs are clearly marked and are not valid official documents or proof of address.</small></footer>
+    <footer className="footer-v2"><a className="brand-lockup" href="/"><span className="brand-symbol">d.</span><span>docubridge</span></a><span>© {new Date().getFullYear()} DocuBridge</span><small>Application assistance helps prepare supporting information; official passports and driving permits are issued only by authorised authorities.</small></footer>
   </main>;
 }
