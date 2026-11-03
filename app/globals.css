@@ -96,3 +96,18 @@
 .field select{width:100%;height:43px;padding:0 12px;border:1px solid #dce6e1;border-radius:8px;background:#fff;color:#263b35;font:11px 'DM Sans',sans-serif;outline:none}
 .field select:focus{border-color:#68a88a;box-shadow:0 0 0 3px #68a88a1a}
 .field select:invalid{color:#71827b}
+
+/* Crypto payment details and unpaid application watermark */
+.crypto-payment-card{margin:22px 0;padding:20px;border:1px solid #dce8e1;border-radius:14px;background:#f8fbf9}
+.crypto-payment-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.crypto-payment-heading h3{margin:0;color:#18352a;font-size:16px}
+.crypto-payment-heading p,.crypto-payment-caution{margin:6px 0 12px;color:#61746a;font-size:12px;line-height:1.55}
+.crypto-payment-heading>span{font-size:9px;font-weight:700;letter-spacing:.12em;color:#9a6b20}
+.crypto-wallet-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #e2ebe5}
+.crypto-wallet-row>div{min-width:0;display:grid;gap:4px}
+.crypto-wallet-row strong{font-size:12px;color:#203b30}
+.crypto-wallet-row small{font-size:10px;color:#6d8076}
+.crypto-wallet-row code{font-size:10px;overflow-wrap:anywhere;color:#38594a}
+.crypto-wallet-row button{border:1px solid #cbdacf;background:#fff;border-radius:7px;padding:7px 10px;font-size:11px;color:#254b38;cursor:pointer}
+.application-summary-preview{position:relative;overflow:hidden}
+.application-watermark{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-24deg);font-size:clamp(44px,9vw,84px);font-weight:900;letter-spacing:.08em;color:rgba(168,50,50,.22);pointer-events:none}
