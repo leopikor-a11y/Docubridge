@@ -227,6 +227,8 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
 
   function reset() {
     setValues({ ...defaults });
+    setPassportPhoto(null);
+    setSignatureFile(null);
     setSaved(false);
     setExportError("");
   }
@@ -274,12 +276,10 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
       if (orderError || !order) throw orderError || new Error("Could not create a draft order.");
 
       const svg = buildSvg(config.kind, values, totals);
-      const uploadedPaths: string[] = [];
       const fileRows: { order_id: string; user_id: string; storage_path: string; file_kind: "input" | "output" }[] = [];
       const previewPath = user.id + "/" + order.id + "/application-summary.svg";
       const { error: previewError } = await supabase.storage.from("customer-documents").upload(previewPath, new Blob([svg], { type: "image/svg+xml" }), { contentType: "image/svg+xml", upsert: false });
       if (previewError) throw previewError;
-      uploadedPaths.push(previewPath);
       fileRows.push({ order_id: order.id, user_id: user.id, storage_path: previewPath, file_kind: "output" });
       for (const [file, label] of [[passportPhoto, "passport-photo"], [signatureFile, "signature"]] as const) {
         if (!file) continue;
@@ -289,7 +289,6 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
         const filePath = user.id + "/" + order.id + "/" + label + "." + extension;
         const { error } = await supabase.storage.from("customer-documents").upload(filePath, file, { contentType: file.type, upsert: false });
         if (error) throw error;
-        uploadedPaths.push(filePath);
         fileRows.push({ order_id: order.id, user_id: user.id, storage_path: filePath, file_kind: "input" });
       }
       const { error: fileError } = await supabase.from("order_files").insert(fileRows);
