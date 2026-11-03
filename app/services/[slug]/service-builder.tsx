@@ -46,31 +46,36 @@ const configs: Record<string, { title: string; eyebrow: string; description: str
     ]
   },
   "passport-generator": {
-    title: "Fictional passport-style prop",
-    eyebrow: "CREATIVE SAMPLE",
-    description: "Create a fictional prop for a film, game or design presentation. It deliberately avoids real passport layouts and official identifiers.",
-    price: "From $6.00",
+    title: "International passport application assistant",
+    eyebrow: "PASSPORT APPLICATION PREPARATION",
+    description: "Prepare your details, passport photograph and signature for submission to the relevant official passport authority. DocuBridge does not issue passports.",
+    price: "Application preparation",
     kind: "passport",
-    sample: true,
     fields: [
-      { key: "fullName", label: "Fictional character", placeholder: "Jordan Vale" },
-      { key: "realm", label: "Imaginary world", placeholder: "The Azure Isles" },
-      { key: "role", label: "Character description", placeholder: "Cartographer" },
-      { key: "propCode", label: "Prop reference", placeholder: "PROP-0007" }
+      { key: "fullName", label: "Full legal name", placeholder: "As shown on supporting identity records", wide: true },
+      { key: "country", label: "Passport issuing country", placeholder: "Enter any country", wide: true },
+      { key: "applicationType", label: "Application type", placeholder: "New passport / renewal / replacement" },
+      { key: "dateOfBirth", label: "Date of birth", type: "date" },
+      { key: "nationality", label: "Nationality", placeholder: "Your nationality" },
+      { key: "email", label: "Contact email", placeholder: "you@example.com", type: "email" },
+      { key: "phone", label: "Contact telephone", placeholder: "Include country code" }
     ]
   },
   "driving-licence-generator": {
-    title: "Fictional driving-card prop",
-    eyebrow: "CREATIVE SAMPLE",
-    description: "Design a fictional driving-card prop for a story or creative project. It is not a licence and cannot be used for identification or driving.",
-    price: "From $6.00",
+    title: "International driving licence application assistant",
+    eyebrow: "DRIVING PERMIT APPLICATION PREPARATION",
+    description: "Prepare your details, photograph and signature for an international driving permit or national licence process. Issuance and eligibility are determined by the authorised authority.",
+    price: "Application preparation",
     kind: "licence",
-    sample: true,
     fields: [
-      { key: "fullName", label: "Fictional character", placeholder: "Taylor Reed" },
-      { key: "realm", label: "Imaginary setting", placeholder: "Westhaven" },
-      { key: "role", label: "Demo category", placeholder: "CLASS DEMO" },
-      { key: "propCode", label: "Prop reference", placeholder: "PROP-0012" }
+      { key: "fullName", label: "Full legal name", placeholder: "As shown on your driving licence", wide: true },
+      { key: "country", label: "Country of current driving licence", placeholder: "Enter any country", wide: true },
+      { key: "destinationCountry", label: "Country where you plan to drive", placeholder: "Enter any country", wide: true },
+      { key: "applicationType", label: "Service required", placeholder: "International driving permit / renewal / replacement" },
+      { key: "licenceNumber", label: "Existing licence reference (optional)", placeholder: "Enter only if required by the authority" },
+      { key: "dateOfBirth", label: "Date of birth", type: "date" },
+      { key: "email", label: "Contact email", placeholder: "you@example.com", type: "email" },
+      { key: "phone", label: "Contact telephone", placeholder: "Include country code" }
     ]
   },
   "utility-sample": {
@@ -125,8 +130,13 @@ const defaults: Record<string, string> = {
   cardId: "TEAM-024",
   email: "alex@example.com",
   validity: TODAY,
-  realm: "The Azure Isles",
-  propCode: "PROP-0007",
+  country: "",
+  destinationCountry: "",
+  applicationType: "",
+  nationality: "",
+  dateOfBirth: "",
+  phone: "",
+  licenceNumber: "",
   provider: "Demo Utilities Co.",
   serviceAddress: "123 Example Street, Sampletown",
   accountRef: "DEMO-1001",
@@ -174,9 +184,20 @@ function buildSvg(kind: string, v: Values, totals: { subtotal: number; tax: numb
   if (kind === "id") {
     return base(900, 560, '<rect x="0" y="0" width="900" height="112" fill="#142d3b"/><circle cx="125" cy="272" r="72" fill="#e3edf0"/><text x="125" y="292" text-anchor="middle" font-family="Arial" font-size="58" font-weight="700" fill="#0e766e">' + xml((v.fullName || "A").slice(0, 1).toUpperCase()) + "</text>" + text(54, 70, v.organization.toUpperCase(), 27, "#ffffff", 700) + text(250, 230, v.fullName, 34, "#142d3b", 700) + text(250, 285, v.role, 23, "#0e766e", 700) + text(250, 360, "BADGE REF  " + v.cardId, 19) + text(250, 410, v.email, 18, "#64748b") + text(250, 460, "VALID THROUGH  " + v.validity, 16, "#64748b") + '<rect x="730" y="476" width="120" height="38" rx="8" fill="#e8f1f1"/>' + text(790, 502, "MEMBER", 15, "#0e766e", 700).replace('x="790"', 'x="790" text-anchor="middle"'), "#f8fbfc");
   }
-  const propTitle = kind === "passport" ? "FICTIONAL PROP DOCUMENT" : kind === "licence" ? "FICTIONAL PROP CARD" : "FICTIONAL BILL SAMPLE";
   if (kind === "passport" || kind === "licence") {
-    return base(900, 560, '<rect x="0" y="0" width="900" height="118" fill="#193d4b"/>' + text(55, 74, propTitle, 24, "#ffffff", 700) + '<circle cx="145" cy="286" r="66" fill="#e4edf0"/><text x="145" y="302" text-anchor="middle" font-family="Arial" font-size="50" font-weight="700" fill="#0e766e">' + xml((v.fullName || "S").slice(0, 1).toUpperCase()) + "</text>" + text(250, 230, v.fullName, 32, "#153344", 700) + text(250, 295, (kind === "passport" ? "IMAGINARY WORLD  " : "FICTIONAL SETTING  ") + v.realm, 19, "#526878") + text(250, 350, v.role, 21, "#0e766e", 700) + text(250, 415, "PROP REFERENCE  " + v.propCode, 18) + '<g transform="rotate(-17 450 310)">' + text(450, 332, "SAMPLE • NOT VALID", 54, "#d34b45", 700).replace('x="450"', 'x="450" text-anchor="middle"') + "</g>", "#eef4f4");
+    const title = kind === "passport" ? "PASSPORT APPLICATION SUMMARY" : "DRIVING PERMIT APPLICATION SUMMARY";
+    const rows = [
+      ["Applicant", v.fullName], ["Issuing country", v.country], ["Destination country", v.destinationCountry],
+      ["Application type", v.applicationType], ["Date of birth", v.dateOfBirth], ["Nationality", v.nationality],
+      ["Contact email", v.email], ["Telephone", v.phone], ["Existing licence reference", v.licenceNumber]
+    ].filter((row) => row[1]).map((row, i) => text(65, 245 + i * 42, row[0] + ": " + row[1], 18, "#263746")).join("");
+    return base(820, 760, '<rect x="0" y="0" width="820" height="16" fill="#1c302a"/>' +
+      text(65, 92, "DOCUBRIDGE", 18, "#24856a", 700) + text(65, 155, title, 27, "#172b39", 700) +
+      text(65, 190, "Applicant-prepared information for official submission", 15, "#64748b") +
+      '<path d="M65 210H755" stroke="#dbe5e8"/>' + rows +
+      '<rect x="55" y="635" width="710" height="75" rx="10" fill="#edf4ef"/>' +
+      text(75, 665, "PREPARATION DOCUMENT — NOT AN OFFICIAL IDENTITY OR TRAVEL DOCUMENT", 13, "#23634d", 700) +
+      text(75, 690, "Submit through the relevant government or authorised issuing authority.", 13, "#526878"));
   }
   return base(820, 720, '<rect x="0" y="0" width="820" height="120" fill="#193d4b"/>' + text(60, 75, v.provider, 30, "#ffffff", 700) + text(60, 190, "SAMPLE STATEMENT", 28, "#193d4b", 700) + text(60, 245, "ACCOUNT HOLDER  " + v.customer, 18) + text(60, 292, "SERVICE LOCATION  " + v.serviceAddress, 17, "#64748b") + text(60, 345, "ACCOUNT REF  " + v.accountRef, 17) + text(60, 390, "BILLING PERIOD  " + v.period, 17) + '<path d="M60 430H760" stroke="#dbe5e8"/>' + text(60, 500, "SAMPLE AMOUNT", 18, "#64748b") + text(60, 550, money(Number(v.amount)), 34, "#0e766e", 700) + '<g transform="rotate(-15 420 360)">' + text(420, 370, "SAMPLE • NOT VALID", 58, "#d34b45", 700).replace('x="420"', 'x="420" text-anchor="middle"') + "</g>", "#ffffff");
 }
@@ -188,6 +209,8 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
   const [exportError, setExportError] = useState("");
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
+  const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
+  const [signatureFile, setSignatureFile] = useState<File | null>(null);
 
   const totals = useMemo(() => {
     const subtotal = Math.max(0, Number(values.unitPrice) || 0) * Math.max(0, Number(values.quantity) || 0);
@@ -251,31 +274,28 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
       if (orderError || !order) throw orderError || new Error("Could not create a draft order.");
 
       const svg = buildSvg(config.kind, values, totals);
-      const path = user.id + "/" + order.id + "/preview.svg";
-      const { error: uploadError } = await supabase.storage
-        .from("customer-documents")
-        .upload(path, new Blob([svg], { type: "image/svg+xml" }), {
-          contentType: "image/svg+xml",
-          upsert: false
-        });
-      if (uploadError) {
-        await supabase.from("orders").delete().eq("id", order.id).eq("user_id", user.id);
-        throw uploadError;
+      const uploadedPaths: string[] = [];
+      const fileRows: { order_id: string; user_id: string; storage_path: string; file_kind: "input" | "output" }[] = [];
+      const previewPath = user.id + "/" + order.id + "/application-summary.svg";
+      const { error: previewError } = await supabase.storage.from("customer-documents").upload(previewPath, new Blob([svg], { type: "image/svg+xml" }), { contentType: "image/svg+xml", upsert: false });
+      if (previewError) throw previewError;
+      uploadedPaths.push(previewPath);
+      fileRows.push({ order_id: order.id, user_id: user.id, storage_path: previewPath, file_kind: "output" });
+      for (const [file, label] of [[passportPhoto, "passport-photo"], [signatureFile, "signature"]] as const) {
+        if (!file) continue;
+        if (!["image/jpeg", "image/png"].includes(file.type)) throw new Error("Upload the photograph and signature as JPG or PNG files.");
+        if (file.size > 5 * 1024 * 1024) throw new Error("Each image must be 5 MB or smaller.");
+        const extension = file.type === "image/png" ? "png" : "jpg";
+        const filePath = user.id + "/" + order.id + "/" + label + "." + extension;
+        const { error } = await supabase.storage.from("customer-documents").upload(filePath, file, { contentType: file.type, upsert: false });
+        if (error) throw error;
+        uploadedPaths.push(filePath);
+        fileRows.push({ order_id: order.id, user_id: user.id, storage_path: filePath, file_kind: "input" });
       }
-
-      const { error: fileError } = await supabase.from("order_files").insert({
-        order_id: order.id,
-        user_id: user.id,
-        storage_path: path,
-        file_kind: "output"
-      });
-      if (fileError) {
-        await supabase.storage.from("customer-documents").remove([path]);
-        await supabase.from("orders").delete().eq("id", order.id).eq("user_id", user.id);
-        throw fileError;
-      }
+      const { error: fileError } = await supabase.from("order_files").insert(fileRows);
+      if (fileError) throw fileError;
       setSaved(true);
-      setSaveMessage("Draft saved privately to your workspace. No payment has been made.");
+      setSaveMessage(isApplication ? "Application preparation draft and attachments saved privately. No payment has been made." : "Draft saved privately to your workspace. No payment has been made.");
     } catch (error) {
       setExportError(error instanceof Error ? error.message : "Unable to save this draft. Please sign in and try again.");
     } finally {
@@ -285,6 +305,7 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
 
   const isInvoice = config.kind === "invoice";
   const isSample = Boolean(config.sample);
+  const isApplication = config.kind === "passport" || config.kind === "licence";
 
   return (
     <main className="builder-page">
@@ -302,6 +323,7 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
       </section>
 
       {isSample && <div className="sample-notice"><Info size={18} /><div><strong>Fictional sample only</strong><span>This output is prominently marked SAMPLE — NOT VALID. Do not enter real personal information or use it as identification, proof of address, or an official record.</span></div></div>}
+      {isApplication && <div className="sample-notice"><Info size={18} /><div><strong>Application preparation only — not government-issued</strong><span>DocuBridge does not issue passports or driving licences. Confirm eligibility, required photo specifications, fees and submission steps with the official authority.</span></div></div>}
 
       <div className="builder-layout">
         <section className="editor-panel">
@@ -321,6 +343,12 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
               </label>
             ))}
           </div>
+          {isApplication && <div className="application-uploads">
+            <div><h3>Passport photograph and signature</h3><p>Attach your own files for your application preparation pack. JPG or PNG, maximum 5 MB each.</p></div>
+            <label className="upload-field"><span>Passport photograph</span><input type="file" accept="image/jpeg,image/png" onChange={(event) => setPassportPhoto(event.target.files?.[0] || null)} />{passportPhoto && <small>Selected: {passportPhoto.name}</small>}</label>
+            <label className="upload-field"><span>Signature image</span><input type="file" accept="image/jpeg,image/png" onChange={(event) => setSignatureFile(event.target.files?.[0] || null)} />{signatureFile && <small>Selected: {signatureFile.name}</small>}</label>
+            <p className="upload-privacy"><ShieldCheck size={14}/> Files upload only when you save, and remain in your private account storage.</p>
+          </div>}
           {isInvoice && <div className="totals-card"><div><span>Subtotal</span><strong>{money(totals.subtotal)}</strong></div><div><span>Tax</span><strong>{money(totals.tax)}</strong></div><div className="grand-total"><span>Total due</span><strong>{money(totals.total)}</strong></div></div>}
           <div className="privacy-note"><ShieldCheck size={16}/><span>Your entries stay in this browser preview. They are not uploaded or saved to an account.</span></div>
         </section>
@@ -338,8 +366,8 @@ export default function ServiceBuilder({ slug }: { slug: string }) {
               </>}
               {config.kind === "certificate" && <div className="certificate-doc"><div className="cert-kicker">AWARD OF RECOGNITION</div><div className="cert-rule"/><h3>{values.achievement}</h3><p>This certificate is proudly presented to</p><div className="cert-recipient">{values.recipient}</div><p>For {values.course}</p><div className="cert-footer"><div><b>{values.issuer}</b><span>Presented by</span></div><div><b>{values.issueDate}</b><span>Date issued</span></div></div><small>{values.certificateId}</small></div>}
               {config.kind === "id" && <div className="id-card-doc"><div className="id-card-band"><span>{values.organization}</span><small>ORGANISATION ACCESS CARD</small></div><div className="id-card-body"><div className="avatar-placeholder">{(values.fullName || "A").slice(0,1).toUpperCase()}</div><div className="id-details"><strong>{values.fullName}</strong><b>{values.role}</b><span>BADGE REF · {values.cardId}</span><span>{values.email}</span><span>VALID THROUGH · {values.validity}</span></div></div><div className="id-card-foot">ORGANISATION ISSUED · NOT A GOVERNMENT ID</div></div>}
-              {config.kind === "passport" && <div className="prop-doc"><div className="prop-doc-top"><span>✦</span><b>STORYWORLD ARCHIVE</b></div><div className="prop-doc-copy"><div className="prop-avatar">{(values.fullName || "A").slice(0,1).toUpperCase()}</div><div><small>FICTIONAL CHARACTER</small><h3>{values.fullName}</h3><p>Imaginary world · {values.realm}</p><p>{values.role}</p><span>PROP REF · {values.propCode}</span></div></div><div className="prop-watermark">SAMPLE · NOT VALID</div><div className="prop-doc-bottom">CREATIVE PROP · NO OFFICIAL STATUS</div></div>}
-              {config.kind === "licence" && <div className="prop-doc licence-prop"><div className="prop-doc-top"><span>✦</span><b>FICTIONAL MOBILITY CLUB</b></div><div className="prop-doc-copy"><div className="prop-avatar">{(values.fullName || "A").slice(0,1).toUpperCase()}</div><div><small>DEMO PROP CARD</small><h3>{values.fullName}</h3><p>Imaginary setting · {values.realm}</p><p>Demo category · {values.role}</p><span>PROP REF · {values.propCode}</span></div></div><div className="prop-watermark">SAMPLE · NOT VALID</div><div className="prop-doc-bottom">NOT A LICENCE · NO DRIVING PRIVILEGES</div></div>}
+              {config.kind === "passport" && <div className="application-summary-preview"><strong>PASSPORT APPLICATION SUMMARY</strong><span>{values.fullName || "Applicant name"}</span><small>{values.country || "Issuing country"} · {values.applicationType || "Application type"}</small><small>Photograph: {passportPhoto ? "Selected" : "Not attached"} · Signature: {signatureFile ? "Selected" : "Not attached"}</small><em>APPLICATION PREPARATION ONLY — NOT A PASSPORT</em></div>}
+              {config.kind === "licence" && <div className="application-summary-preview"><strong>INTERNATIONAL DRIVING PERMIT APPLICATION</strong><span>{values.fullName || "Applicant name"}</span><small>{values.country || "Current licence country"} → {values.destinationCountry || "Destination country"}</small><small>Photograph: {passportPhoto ? "Selected" : "Not attached"} · Signature: {signatureFile ? "Selected" : "Not attached"}</small><em>APPLICATION PREPARATION ONLY — NOT A DRIVING LICENCE</em></div>}
               {config.kind === "utility" && <div className="utility-doc"><div className="utility-doc-head"><div><span>DEMO STATEMENT</span><h3>{values.provider}</h3></div><b>UTILITY<br/>SAMPLE</b></div><div className="utility-watermark">SAMPLE · NOT VALID</div><div className="utility-doc-customer"><small>FICTIONAL CUSTOMER</small><strong>{values.customer}</strong><span>{values.serviceAddress}</span></div><div className="utility-doc-grid"><div><small>DEMO ACCOUNT</small><b>{values.accountRef}</b></div><div><small>BILLING PERIOD</small><b>{values.period}</b></div><div><small>SAMPLE DUE DATE</small><b>{values.dueDate}</b></div></div><div className="utility-amount"><span>SAMPLE AMOUNT</span><strong>{money(Number(values.amount))}</strong></div><div className="utility-disclaimer">FICTIONAL LAYOUT FOR DESIGN TESTING ONLY · NOT PROOF OF ADDRESS OR PAYMENT</div></div>}
             </div>
           </div>
