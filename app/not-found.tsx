@@ -1,0 +1,1 @@
+export default function NotFound(){return <main className="wrap toolPage"><div className="eyebrow">404</div><h1 className="pageTitle">Page not found</h1><p className="lead">The page you are looking for may have moved.</p><a className="button primary" href="/">Return to DocuBridge</a></main>}
