@@ -91,3 +91,8 @@
 .application-summary-preview>em{margin-top:auto;padding:13px;background:#edf5ef;border-radius:7px;color:#286247;font:800 9px Manrope;font-style:normal;line-height:1.6}
 .application-notice{background:#f1f6f2;border-color:#d5e5d9}
 @media(max-width:650px){.application-uploads{padding:13px}.application-summary-preview{padding:19px;min-height:280px}}
+
+/* Country selector for international application forms */
+.field select{width:100%;height:43px;padding:0 12px;border:1px solid #dce6e1;border-radius:8px;background:#fff;color:#263b35;font:11px 'DM Sans',sans-serif;outline:none}
+.field select:focus{border-color:#68a88a;box-shadow:0 0 0 3px #68a88a1a}
+.field select:invalid{color:#71827b}
