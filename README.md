@@ -22,3 +22,13 @@ DocuBridge must not create counterfeit government passports, licences, national 
 
 ## Crypto implementation requirements
 Never collect seed phrases, private keys, or wallet passwords. WalletConnect connects customer wallets; merchant receiving addresses are configured server-side as public addresses only. Verify chain, token contract, recipient, amount, transaction status, and confirmations on the backend before releasing downloads. Accept only BTC, USDT TRC20, USDT ERC20, and USDC on Arc. Do not silently accept other networks or assets.
+
+
+## Supabase setup
+1. Create a Supabase project.
+2. Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+3. Run `supabase/schema.sql` in the Supabase SQL Editor.
+4. In Supabase Authentication URL settings, allow your local and production `/auth/callback` URLs.
+5. Keep email confirmation enabled. The service-role key, if used by later server-only jobs, must never be exposed in client-side code.
+
+Customer sign-up/sign-in and a protected dashboard are implemented but require Supabase configuration. Orders are not yet created or paid by the application. Payment verification must be server-side before any file is released.
